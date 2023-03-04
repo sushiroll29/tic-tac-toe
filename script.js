@@ -1,12 +1,12 @@
 const gameboard = (() => {
   const container = document.querySelector(".game-board");
-  let gameBoardGrid = [];
+//   let gameBoardGrid = [];
 
   const getGameBoard = () => gameBoardGrid;
 
   const createGrid = () => {
     for (let i = 0; i < 9; i++) {
-      gameBoardGrid.push("");
+    //   gameBoardGrid.push("");
       const cell = document.createElement("div");
       cell.classList.add("cell");
       container.appendChild(cell);
@@ -24,26 +24,41 @@ const player = (name, mark) => {
 const FirstPlayer = player("Kirk", "X");
 const SecondPlayer = player("Avery", "O");
 
-const game = ((player1, player2) => {
+const game = ((playerOne, playerTwo) => {
   gameboard.createGrid();
   // const board = gameboard.getGameBoard();
   const cells = document.querySelectorAll(".cell");
-  const player1Mark = player1.getMark();
-  const player2Mark = player2.getMark();
-  let currentMark = "";
-  let playertTwoTurn = false;
+  const playerOneMark = playerOne.getMark();
+  const playerTwoMark = playerTwo.getMark();
+  let curentPlayer;
+  let playerTwoTurn = false;
 
-  if (playertTwoTurn) {
-    currentMark = player2Mark;
-  } else {
-    currentMark = player1Mark;
-  }
-
+  const getCurrentPlayer = () => {
+    if (playerTwoTurn) {
+      curentPlayer = playerTwo;
+    } else {
+      curentPlayer = playerOne;
+    }
+  };
+  
   const swapTurn = () => {
-    playertTwoTurn = !playertTwoTurn;
+    playerTwoTurn = !playerTwoTurn;
+    getCurrentPlayer();
   };
 
-  const checkWinner = (currentMark) => {
+  const displayWinner = (winner) => {
+    const container = document.querySelector(".container");
+    const div = document.createElement("div");
+    container.appendChild(div);
+
+    div.textContent = `Congratulations ${winner}!`;
+  };
+
+  const endGame = (winner) => {
+    displayWinner(winner);
+  };
+
+  const checkWinner = (mark, winner) => {
     const winPossibilities = [
       [0, 1, 2],
       [3, 4, 5],
@@ -55,34 +70,35 @@ const game = ((player1, player2) => {
       [2, 4, 6],
     ];
 
-    winPossibilities.forEach((set) => {
+    winPossibilities.forEach((possiblity) => {
       let k = 0;
-      for (let i = 0; i < set.length; i++) {
-        if (cells[set[i]].classList.contains(currentMark)) {
+      for (let i = 0; i < possiblity.length; i++) {
+        if (cells[possiblity[i]].classList.contains(mark)) {
           k += 1;
         }
-
-        if (k == 3) {
-          console.log("w");
-        }
+      }
+      if (k == 3) {
+        console.log("w");
+        endGame(winner);
       }
     });
   };
 
   const cellClickHandler = (e) => {
     const cell = e.target;
+    getCurrentPlayer();
     // const index = Array.from(e.target.parentNode.children).indexOf(e.target);
 
-    if (playertTwoTurn) {
-      cell.textContent = player2Mark;
+    if (playerTwoTurn) {
+      cell.textContent = playerTwoMark;
       cell.classList.add("O");
       //   board[index] = 1;
     } else {
-      cell.textContent = player1Mark;
+      cell.textContent = playerOneMark;
       cell.classList.add("X");
       //   board[index] = 2;
     }
-    checkWinner(currentMark);
+    checkWinner(curentPlayer.getMark(), curentPlayer.getName());
     swapTurn();
   };
 
