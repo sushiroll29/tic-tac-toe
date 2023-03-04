@@ -50,7 +50,7 @@
     background-color: var(--grey);
   }
 
-  .game-board > .cell:nth-child(2n) {
+  .game-board > .cell{
     width: 120px;
     height: 120px;
     display: flex;
@@ -59,19 +59,18 @@
     font-size: 3rem;
     font-family: 'Shantell Sans', sans-serif;
     font-weight: 300;
-    color: var(--green);
     background-color: white;
   }
 
-  .game-board > .cell:nth-child(2n+1){
-    width: 120px;
-    height: 120px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3rem;
-    font-family: 'Shantell Sans', sans-serif;
-    font-weight: 300;
+  .game-board > .cell.X{
+    color: var(--green);
+  }
+
+  .game-board > .cell.O{
     color: var(--cream);
-    background-color: white;
+  }
+
+
+  .game-board > .cell:hover {
+    cursor: pointer;
   }
