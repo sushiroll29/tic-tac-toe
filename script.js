@@ -1,24 +1,19 @@
 const gameboard = (() => {
-    const container = document.querySelector('.game-board');
-    let gameBoardGrid = [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-    ];
+  const container = document.querySelector(".game-board");
+  let gameBoardGrid = [];
 
-    const createGrid = () => {
-        for(let i = 0; i < gameBoardGrid.length; i++){
-            for(let j = 0; j < gameBoardGrid[i].length; j++){
-                const cell = document.createElement('div');
-                cell.classList.add('cell');
-                container.appendChild(cell);
-            }
-        }
+  const getGameBoard = () => gameBoardGrid;
+
+  const createGrid = () => {
+    for (let i = 0; i < 9; i++) {
+      gameBoardGrid.push("");
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      container.appendChild(cell);
     }
-return {createGrid}
+  };
+  return { getGameBoard, createGrid };
 })();
-
-gameboard.createGrid();
 
 const player = (name, mark) => {
   const getName = () => name;
@@ -30,35 +25,33 @@ const FirstPlayer = player("Kirk", "X");
 const SecondPlayer = player("Avery", "O");
 
 const Game = ((player1, player2) => {
-    
-    let playertTwoTurn = false;
-    const cells = document.querySelectorAll(".cell");
+    gameboard.createGrid();
+  let playertTwoTurn = false;
+  const cells = document.querySelectorAll(".cell");
 
-    const swapTurn = () => {
-        playertTwoTurn = !playertTwoTurn;
+  const swapTurn = () => {
+    playertTwoTurn = !playertTwoTurn;
+  };
+
+  const cellClickHandler = (e) => {
+    const cell = e.target;
+    const index = Array.from(e.target.parentNode.children).indexOf(e.target);
+    const board = gameboard.getGameBoard();
+
+    if (playertTwoTurn) {
+      cell.textContent = player2.getMark();
+      cell.classList.add("O");
+      board[index] = 1;
+    } else {
+      cell.textContent = player1.getMark();
+      cell.classList.add("X");
+      board[index] = 2;
     }
-    
+    swapTurn();
+    console.log(board);
+  };
 
-    const cellClickHandler = (e) => {
-        const cell = e.target;
-        console.log(cell);
-        if(playertTwoTurn){
-            cell.textContent = player2.getMark();
-            cell.classList.add('O');
-        } else {
-            cell.textContent = player1.getMark();
-            cell.classList.add('X');
-        }
-        playertTwoTurn ? cell.textContent = player2.getMark() : cell.textContent = player1.getMark();
-        swapTurn();
-    }
-
-    cells.forEach(cell => {
-        cell.addEventListener('click', cellClickHandler, { once: true })
-    })
-        
-    
-    
-
-
+  cells.forEach((cell) => {
+    cell.addEventListener("click", cellClickHandler, { once: true });
+  });
 })(FirstPlayer, SecondPlayer);
