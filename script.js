@@ -1,12 +1,10 @@
 const gameboard = (() => {
   const container = document.querySelector(".game-board");
-  //   let gameBoardGrid = [];
 
   const getGameBoard = () => container;
 
   const createGrid = () => {
     for (let i = 0; i < 9; i++) {
-      //   gameBoardGrid.push("");
       const cell = document.createElement("div");
       cell.classList.add("cell");
       container.appendChild(cell);
@@ -32,23 +30,22 @@ const player = (name, mark) => {
 const FirstPlayer = player("Kirk", "X");
 const SecondPlayer = player("Avery", "O");
 
-const gameController = (() => {
-  const displayCurrentPlayer = (currentPlayer) => {};
+const DOMController = (() => {
+  const displayCurrentPlayer = (currentPlayer) => {
+    const playerInfo = document.querySelector(".player-info");
+    playerInfo.style.display = "block";
+    playerInfo.textContent = `${currentPlayer}'s turn`;
+  };
 
-  const displayWinner = (winner) => {
+  const displayWinner = (winner, message) => {
     const winnerDiv = document.querySelector(".winner");
     winnerDiv.style.display = "block";
-    winnerDiv.textContent = `Congratulations ${winner}!`;
+    winner
+      ? (winnerDiv.textContent = `Congratulations ${winner}!`)
+      : (winnerDiv.textContent = `${message}`);
   };
 
-  const removeDisplayWinner = () => {
-    const winnerDiv = document.querySelector(".winner");
-    const resetButton = document.querySelector(".reset-btn");
-    winnerDiv.style.display = "none";
-    resetButton.style.display = "none";
-  };
-
-  return { displayWinner, removeDisplayWinner };
+  return { displayCurrentPlayer, displayWinner };
 })();
 
 const game = ((playerOne, playerTwo) => {
@@ -60,6 +57,7 @@ const game = ((playerOne, playerTwo) => {
   const swapTurn = () => {
     playerTwoTurn = !playerTwoTurn;
     getCurrentPlayer();
+    DOMController.displayCurrentPlayer(curentPlayer.getMark());
   };
 
   const getCurrentPlayer = () => {
@@ -73,7 +71,9 @@ const game = ((playerOne, playerTwo) => {
   };
 
   const endGame = (winner) => {
-    gameController.displayWinner(winner);
+    const playerInfo = document.querySelector(".player-info");
+    playerInfo.style.display = "none";
+    DOMController.displayWinner(winner);
     removeCellInteraction();
     resetGame();
   };
@@ -83,17 +83,20 @@ const game = ((playerOne, playerTwo) => {
     resetButton.style.display = "block";
 
     resetButton.addEventListener("click", () => {
-      gameController.removeDisplayWinner();
       gameboard.resetGrid();
       startGame();
     });
   };
 
+  // checks if all the board cells are filled
   const checkTie = () => {
     const cells = document.querySelectorAll(".cell");
     let cellsArr = Array.from(cells);
     if (cellsArr.every(isCellFilled)) {
-      console.log("tie");
+      DOMController.displayWinner("", "It's a tie!");
+    //   const resetButton = document.querySelector(".reset-btn");
+    //   resetButton.style.display = "block";
+    resetGame();
     }
   };
 
@@ -126,32 +129,35 @@ const game = ((playerOne, playerTwo) => {
       }
       // 3 marks at the correct index combination = win
       if (k == 3) {
+        console.log(winner);
         endGame(winner);
         winnerFlag = true;
+        return true;
       }
     });
     //if no winner was found, check for a tie
-    if(!winnerFlag) {
-        checkTie();
+    if (!winnerFlag) {
+      checkTie();
+      return true;
     }
-    
   };
 
   const cellClickHandler = (e) => {
     const cell = e.target;
     getCurrentPlayer();
-    // const index = Array.from(e.target.parentNode.children).indexOf(e.target);
 
     if (playerTwoTurn) {
       cell.textContent = playerTwoMark;
       cell.classList.add("O");
-      //   board[index] = 1;
     } else {
       cell.textContent = playerOneMark;
       cell.classList.add("X");
-      //   board[index] = 2;
     }
-    checkWinner(curentPlayer.getMark(), curentPlayer.getName());
+    if (!checkWinner(curentPlayer.getMark(), curentPlayer.getName())) {
+      const playerInfo = document.querySelector(".player-info");
+      playerInfo.textContent = "";
+      return;
+    }
     swapTurn();
   };
 
@@ -170,7 +176,11 @@ const game = ((playerOne, playerTwo) => {
   };
 
   const startGame = () => {
-    gameController.removeDisplayWinner();
+    const resetButton = document.querySelector(".reset-btn");
+    const winnerDiv = document.querySelector(".winner");
+    winnerDiv.style.display = "none";
+    resetButton.style.display = "none";
+    DOMController.displayCurrentPlayer(playerOne.getMark());
     playerTwoTurn = false;
     gameboard.createGrid();
     addCellInteraction();
