@@ -31,6 +31,15 @@ const FirstPlayer = player("Kirk", "X");
 const SecondPlayer = player("Avery", "O");
 
 const DOMController = (() => {
+  const initializeGameScreen = () => {
+    const resetButton = document.querySelector(".reset-btn");
+    const winnerDiv = document.querySelector(".winner-info");
+    winnerDiv.style.display = "none";
+    resetButton.style.display = "none";
+  };
+
+  const getPlayerInfo = () => {};
+
   const displayNextPlayer = (nextPlayer) => {
     const playerInfo = document.querySelector(".player-info");
     playerInfo.style.display = "block";
@@ -38,16 +47,18 @@ const DOMController = (() => {
   };
 
   const displayWinner = (winner, message) => {
-    const winnerDiv = document.querySelector(".winner");
+    const winnerDiv = document.querySelector(".winner-info");
     winnerDiv.style.display = "block";
     const playerInfo = document.querySelector(".player-info");
     playerInfo.style.display = "none";
+
+    // if there's no winner and the board is full, log 'tie' message
     winner
       ? (winnerDiv.textContent = `Congratulations, ${winner}!`)
       : (winnerDiv.textContent = `${message}`);
   };
 
-  return { displayNextPlayer, displayWinner };
+  return { initializeGameScreen, displayNextPlayer, displayWinner };
 })();
 
 const game = ((playerOne, playerTwo) => {
@@ -169,10 +180,7 @@ const game = ((playerOne, playerTwo) => {
   };
 
   const startGame = () => {
-    const resetButton = document.querySelector(".reset-btn");
-    const winnerDiv = document.querySelector(".winner");
-    winnerDiv.style.display = "none";
-    resetButton.style.display = "none";
+    DOMController.initializeGameScreen();
     DOMController.displayNextPlayer(playerOne.getMark());
     playerTwoTurn = false;
     gameboard.createGrid();
