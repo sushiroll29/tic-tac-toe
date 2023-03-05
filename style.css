@@ -74,3 +74,8 @@
   .game-board > .cell:hover {
     cursor: pointer;
   }
+
+  .reset-btn {
+    padding: 7px 14px;
+    color: black;
+  }
