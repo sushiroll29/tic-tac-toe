@@ -33,6 +33,8 @@ const FirstPlayer = player("Kirk", "X");
 const SecondPlayer = player("Avery", "O");
 
 const gameController = (() => {
+  const displayCurrentPlayer = (currentPlayer) => {};
+
   const displayWinner = (winner) => {
     const winnerDiv = document.querySelector(".winner");
     winnerDiv.style.display = "block";
@@ -87,7 +89,20 @@ const game = ((playerOne, playerTwo) => {
     });
   };
 
+  const checkTie = () => {
+    const cells = document.querySelectorAll(".cell");
+    let cellsArr = Array.from(cells);
+    if (cellsArr.every(isCellFilled)) {
+      console.log("tie");
+    }
+  };
+
+  const isCellFilled = (cell) => {
+    return cell.textContent != "";
+  };
+
   const checkWinner = (mark, winner) => {
+    let winnerFlag = false;
     const winPossibilities = [
       [0, 1, 2],
       [3, 4, 5],
@@ -99,7 +114,7 @@ const game = ((playerOne, playerTwo) => {
       [2, 4, 6],
     ];
 
-    winPossibilities.forEach((possiblity) => {
+    winPossibilities.some((possiblity) => {
       const cells = document.querySelectorAll(".cell");
       // k is a counter that keeps track of how many marks of the same type are placed on the board
       let k = 0;
@@ -112,8 +127,14 @@ const game = ((playerOne, playerTwo) => {
       // 3 marks at the correct index combination = win
       if (k == 3) {
         endGame(winner);
+        winnerFlag = true;
       }
     });
+    //if no winner was found, check for a tie
+    if(!winnerFlag) {
+        checkTie();
+    }
+    
   };
 
   const cellClickHandler = (e) => {
