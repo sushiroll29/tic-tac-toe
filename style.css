@@ -70,7 +70,7 @@ h6 {
   text-align: center;
   gap: 3px;
   background-color: var(--darker-grey);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .game-board > .cell {
@@ -99,7 +99,6 @@ h6 {
 
 .reset-btn {
   padding: 7px 14px;
-  margin: 10px;
   color: white;
   font-size: 17px;
   font-weight: 700;
@@ -125,4 +124,5 @@ h6 {
 .player-info, .winner{
     font-size: 20px;
     font-weight: 700;
+    margin-bottom: .7rem;
 }

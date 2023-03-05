@@ -31,10 +31,10 @@ const FirstPlayer = player("Kirk", "X");
 const SecondPlayer = player("Avery", "O");
 
 const DOMController = (() => {
-  const displayCurrentPlayer = (currentPlayer) => {
+  const displayNextPlayer = (nextPlayer) => {
     const playerInfo = document.querySelector(".player-info");
     playerInfo.style.display = "block";
-    playerInfo.textContent = `${currentPlayer}'s turn`;
+    playerInfo.textContent = `${nextPlayer}'s turn`;
   };
 
   const displayWinner = (winner, message) => {
@@ -43,16 +43,14 @@ const DOMController = (() => {
     const playerInfo = document.querySelector(".player-info");
     playerInfo.style.display = "none";
     winner
-      ? (winnerDiv.textContent = `Congratulations ${winner}!`)
+      ? (winnerDiv.textContent = `Congratulations, ${winner}!`)
       : (winnerDiv.textContent = `${message}`);
   };
 
-  return { displayCurrentPlayer, displayWinner };
+  return { displayNextPlayer, displayWinner };
 })();
 
 const game = ((playerOne, playerTwo) => {
-  const playerOneMark = playerOne.getMark();
-  const playerTwoMark = playerTwo.getMark();
   let curentPlayer;
   let playerTwoTurn = false;
 
@@ -143,17 +141,16 @@ const game = ((playerOne, playerTwo) => {
     getCurrentPlayer();
 
     if (playerTwoTurn) {
-      cell.textContent = playerTwoMark;
+      cell.textContent = playerTwo.getMark();
       cell.classList.add("O");
+      DOMController.displayNextPlayer(playerOne.getMark());
     } else {
-      cell.textContent = playerOneMark;
+      cell.textContent = playerOne.getMark();
       cell.classList.add("X");
+      DOMController.displayNextPlayer(playerTwo.getMark());
     }
-    DOMController.displayCurrentPlayer(curentPlayer.getMark());
-    if (!checkWinner(curentPlayer.getMark(), curentPlayer.getName())) {
-      const playerInfo = document.querySelector(".player-info");
-      playerInfo.style.display = "none";
-    }
+    //
+    checkWinner(curentPlayer.getMark(), curentPlayer.getName());
     swapTurn();
   };
 
@@ -176,7 +173,7 @@ const game = ((playerOne, playerTwo) => {
     const winnerDiv = document.querySelector(".winner");
     winnerDiv.style.display = "none";
     resetButton.style.display = "none";
-    DOMController.displayCurrentPlayer(playerOne.getMark());
+    DOMController.displayNextPlayer(playerOne.getMark());
     playerTwoTurn = false;
     gameboard.createGrid();
     addCellInteraction();
