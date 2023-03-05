@@ -40,6 +40,8 @@ const DOMController = (() => {
   const displayWinner = (winner, message) => {
     const winnerDiv = document.querySelector(".winner");
     winnerDiv.style.display = "block";
+    const playerInfo = document.querySelector(".player-info");
+    playerInfo.style.display = "none";
     winner
       ? (winnerDiv.textContent = `Congratulations ${winner}!`)
       : (winnerDiv.textContent = `${message}`);
@@ -57,7 +59,6 @@ const game = ((playerOne, playerTwo) => {
   const swapTurn = () => {
     playerTwoTurn = !playerTwoTurn;
     getCurrentPlayer();
-    DOMController.displayCurrentPlayer(curentPlayer.getMark());
   };
 
   const getCurrentPlayer = () => {
@@ -71,8 +72,6 @@ const game = ((playerOne, playerTwo) => {
   };
 
   const endGame = (winner) => {
-    const playerInfo = document.querySelector(".player-info");
-    playerInfo.style.display = "none";
     DOMController.displayWinner(winner);
     removeCellInteraction();
     resetGame();
@@ -94,9 +93,7 @@ const game = ((playerOne, playerTwo) => {
     let cellsArr = Array.from(cells);
     if (cellsArr.every(isCellFilled)) {
       DOMController.displayWinner("", "It's a tie!");
-    //   const resetButton = document.querySelector(".reset-btn");
-    //   resetButton.style.display = "block";
-    resetGame();
+      resetGame();
     }
   };
 
@@ -129,7 +126,6 @@ const game = ((playerOne, playerTwo) => {
       }
       // 3 marks at the correct index combination = win
       if (k == 3) {
-        console.log(winner);
         endGame(winner);
         winnerFlag = true;
         return true;
@@ -153,10 +149,10 @@ const game = ((playerOne, playerTwo) => {
       cell.textContent = playerOneMark;
       cell.classList.add("X");
     }
+    DOMController.displayCurrentPlayer(curentPlayer.getMark());
     if (!checkWinner(curentPlayer.getMark(), curentPlayer.getName())) {
       const playerInfo = document.querySelector(".player-info");
-      playerInfo.textContent = "";
-      return;
+      playerInfo.style.display = "none";
     }
     swapTurn();
   };

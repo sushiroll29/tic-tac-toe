@@ -1,5 +1,6 @@
 :root {
   --grey: #bec2ce;
+  --darker-grey: #7d838d;
   --dark-grey: #313337;
   --dark-green: #89b0ae;
   --green: #9bd4c8;
@@ -58,7 +59,8 @@ h6 {
 }
 
 .container > h1 {
-    margin-bottom: 4rem;
+    margin: 1rem 0 2rem 0;
+    font-weight: 700;
 }
 
 .container > .game > .game-board {
@@ -66,9 +68,9 @@ h6 {
   max-width: 360px;
   grid-template-columns: repeat(3, minmax(120px, 1fr));
   text-align: center;
-  gap: 2px;
-  background-color: var(--grey);
-  margin-bottom: 2rem;
+  gap: 3px;
+  background-color: var(--darker-grey);
+  margin-bottom: 1rem;
 }
 
 .game-board > .cell {
@@ -79,7 +81,7 @@ h6 {
   align-items: center;
   font-size: 3rem;
   font-family: "Shantell Sans", sans-serif;
-  font-weight: 300;
+  font-weight: 600;
   background-color: white;
 }
 
@@ -97,8 +99,19 @@ h6 {
 
 .reset-btn {
   padding: 7px 14px;
-  color: black;
+  margin: 10px;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  border: none;
+  border-radius: 9px;
+  background-color: var(--green);
 }
+
+.reset-btn:hover {
+    cursor: pointer;
+    background-color: var(--dark-green);
+  }
 
 .game {
   display: flex;
@@ -107,4 +120,9 @@ h6 {
   align-items: center;
   gap: 20px;
   position: relative;
+}
+
+.player-info, .winner{
+    font-size: 20px;
+    font-weight: 700;
 }
