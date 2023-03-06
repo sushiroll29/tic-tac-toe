@@ -69,8 +69,9 @@ h6 {
 
 .container > .game > .game-board {
   display: grid;
-  max-width: 360px;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  /* width takes into account 2 x 3px grid gap */
+  max-width: 366px;
+  grid-template-columns: repeat(3, 1fr);
   text-align: center;
   gap: 3px;
   background-color: var(--darker-grey);
@@ -159,6 +160,7 @@ button.reset-btn:hover {
 .title.move-up.fix {
   position: absolute;
 }
+
 .fade-in {
   animation: fadeInAnimation ease-in 0.4s;
 }
