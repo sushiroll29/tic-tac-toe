@@ -5,6 +5,7 @@
   --dark-green: #89b0ae;
   --green: #9bd4c8;
   --cream: #fe7a71;
+  --dark-cream: #cc635b;
   --light-cream: #faf9f9;
 }
 
@@ -52,10 +53,12 @@ h6 {
 }
 
 .container {
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .container > h1 {
@@ -97,7 +100,7 @@ h6 {
   cursor: pointer;
 }
 
-.reset-btn {
+button {
   padding: 7px 14px;
   color: white;
   font-size: 17px;
@@ -107,7 +110,20 @@ h6 {
   background-color: var(--green);
 }
 
-.reset-btn:hover {
+button.start-btn{
+  background-color: var(--cream);
+}
+
+button.start-btn:hover{
+  cursor: pointer;
+  background-color: var(--dark-cream);
+}
+
+button.reset-btn {
+  background-color: var(--green);
+}
+
+button.reset-btn:hover {
     cursor: pointer;
     background-color: var(--dark-green);
   }
@@ -125,4 +141,17 @@ h6 {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: .7rem;
+}
+
+.title, .start {
+  justify-self: center;
+}
+
+.title.move-up{
+  transform: translateY(calc(-40vh ));
+  transition: 1s;
+}
+
+.title.move-up.fix{
+  position: absolute;
 }

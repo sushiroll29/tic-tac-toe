@@ -1,3 +1,4 @@
+
 const gameboard = (() => {
   const container = document.querySelector(".game-board");
 
@@ -31,9 +32,33 @@ const FirstPlayer = player("Kirk", "X");
 const SecondPlayer = player("Avery", "O");
 
 const DOMController = (() => {
-  const initializeGameScreen = () => {
-    const resetButton = document.querySelector(".reset-btn");
+  const resetButton = document.querySelector(".reset-btn");
     const winnerDiv = document.querySelector(".winner-info");
+    const playerInfo = document.querySelector(".player-info");
+const initializeStartScreen = () => {
+  const gameDiv = document.querySelector(".game");
+  const startButton = document.querySelector('.start-btn');
+  const title = document.querySelector('.title');
+  gameDiv.style.display = 'none';
+  resetButton.style.display = 'none';
+
+  startButton.style.display = 'block';
+  startButton.addEventListener('click', () => {
+    title.classList.add('move-up');
+    startButton.style.display = 'none';
+    gameDiv.style.display = 'flex';
+    
+    setTimeout(() => {
+      game.startGame();
+      
+     }, 1.0 * 1000);
+    
+  })
+  title.classList.add('fix');
+}
+
+  const initializeGameScreen = () => {
+    
     winnerDiv.style.display = "none";
     resetButton.style.display = "none";
   };
@@ -41,15 +66,13 @@ const DOMController = (() => {
   const getPlayerInfo = () => {};
 
   const displayNextPlayer = (nextPlayer) => {
-    const playerInfo = document.querySelector(".player-info");
+    
     playerInfo.style.display = "block";
     playerInfo.textContent = `${nextPlayer}'s turn`;
   };
 
   const displayWinner = (winner, message) => {
-    const winnerDiv = document.querySelector(".winner-info");
     winnerDiv.style.display = "block";
-    const playerInfo = document.querySelector(".player-info");
     playerInfo.style.display = "none";
 
     // if there's no winner and the board is full, log 'tie' message
@@ -58,7 +81,7 @@ const DOMController = (() => {
       : (winnerDiv.textContent = `${message}`);
   };
 
-  return { initializeGameScreen, displayNextPlayer, displayWinner };
+  return { initializeStartScreen, initializeGameScreen, displayNextPlayer, displayWinner };
 })();
 
 const game = ((playerOne, playerTwo) => {
@@ -187,5 +210,7 @@ const game = ((playerOne, playerTwo) => {
     addCellInteraction();
   };
 
-  startGame();
+  // startGame();
+  DOMController.initializeStartScreen();
+  return { startGame }
 })(FirstPlayer, SecondPlayer);
