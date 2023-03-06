@@ -77,7 +77,7 @@ const initializeStartScreen = () => {
 
     // if there's no winner and the board is full, log 'tie' message
     winner
-      ? (winnerDiv.textContent = `Congratulations, ${winner}!`)
+      ? (winnerDiv.textContent = `${winner} wins!`)
       : (winnerDiv.textContent = `${message}`);
   };
 
@@ -184,7 +184,8 @@ const game = ((playerOne, playerTwo) => {
       DOMController.displayNextPlayer(playerTwo.getMark());
     }
     //
-    checkWinner(curentPlayer.getMark(), curentPlayer.getName());
+    // checkWinner(curentPlayer.getMark(), curentPlayer.getName());
+    checkWinner(curentPlayer.getMark(), curentPlayer.getMark());
     swapTurn();
   };
 

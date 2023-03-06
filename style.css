@@ -74,6 +74,7 @@ h6 {
   gap: 3px;
   background-color: var(--darker-grey);
   margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .game-board > .cell {
