@@ -1,4 +1,5 @@
 :root {
+  --light-grey: #f6f6f6;
   --grey: #bec2ce;
   --darker-grey: #7d838d;
   --dark-grey: #313337;
@@ -141,7 +142,7 @@ button.reset-btn:hover {
 .player-info, .winner-info{
     font-size: 20px;
     font-weight: 700;
-    margin-bottom: .7rem;
+    margin-bottom: .8rem;
 }
 
 .title, .start {
@@ -150,9 +151,21 @@ button.reset-btn:hover {
 
 .title.move-up{
   transform: translateY(calc(-40vh ));
-  transition: 1s;
+  transition: .7s;
 }
 
 .title.move-up.fix{
   position: absolute;
+}
+.fade-in{
+  animation: fadeInAnimation ease-in .4s;
+}
+
+@keyframes fadeInAnimation {
+  0% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 1;
+   }
 }
