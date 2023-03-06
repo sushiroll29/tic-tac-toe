@@ -85,12 +85,28 @@ const DOMController = (() => {
       : (gameInfo.textContent = `${message}`);
   };
 
+  const addCellInteraction = (handlerFunction) => {
+    const cells = document.querySelectorAll(".cell");
+    cells.forEach((cell) => {
+      cell.addEventListener("click", handlerFunction, { once: true });
+    });
+  };
+
+  const removeCellInteraction = (handlerFunction) => {
+    const cells = document.querySelectorAll(".cell");
+    cells.forEach((cell) => {
+      cell.removeEventListener("click", handlerFunction, { once: true });
+    });
+  };
+
   return {
     visiblityOn,
     initializeStartScreen,
     initializeGameScreen,
     displayNextPlayer,
     displayWinner,
+    addCellInteraction,
+    removeCellInteraction,
   };
 })();
 
@@ -115,7 +131,7 @@ const game = ((playerOne, playerTwo) => {
 
   const endGame = (winner) => {
     DOMController.displayWinner(winner);
-    removeCellInteraction();
+    DOMController.removeCellInteraction(cellClickHandler);
     resetGame();
   };
 
@@ -205,26 +221,12 @@ const game = ((playerOne, playerTwo) => {
     swapTurn();
   };
 
-  const addCellInteraction = () => {
-    const cells = document.querySelectorAll(".cell");
-    cells.forEach((cell) => {
-      cell.addEventListener("click", cellClickHandler, { once: true });
-    });
-  };
-
-  const removeCellInteraction = () => {
-    const cells = document.querySelectorAll(".cell");
-    cells.forEach((cell) => {
-      cell.removeEventListener("click", cellClickHandler, { once: true });
-    });
-  };
-
   const startGame = () => {
     DOMController.initializeGameScreen();
     DOMController.displayNextPlayer(playerOne.getMark());
     playerTwoTurn = false;
     gameboard.createGrid();
-    addCellInteraction();
+    DOMController.addCellInteraction(cellClickHandler);
   };
 
   DOMController.initializeStartScreen();
