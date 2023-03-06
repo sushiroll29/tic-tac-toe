@@ -63,8 +63,8 @@ h6 {
 }
 
 .container > h1 {
-    margin: 1rem 0 2rem 0;
-    font-weight: 700;
+  margin: 1rem 0 2rem 0;
+  font-weight: 700;
 }
 
 .container > .game > .game-board {
@@ -111,11 +111,11 @@ button {
   background-color: var(--green);
 }
 
-button.start-btn{
+button.start-btn {
   background-color: var(--cream);
 }
 
-button.start-btn:hover{
+button.start-btn:hover {
   cursor: pointer;
   background-color: var(--dark-cream);
 }
@@ -125,9 +125,9 @@ button.reset-btn {
 }
 
 button.reset-btn:hover {
-    cursor: pointer;
-    background-color: var(--dark-green);
-  }
+  cursor: pointer;
+  background-color: var(--dark-green);
+}
 
 .game {
   display: flex;
@@ -139,33 +139,35 @@ button.reset-btn:hover {
   padding-top: 1.5rem;
 }
 
-.player-info, .winner-info{
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: .8rem;
+.player-info,
+.game-info {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
 }
 
-.title, .start {
+.title,
+.start {
   justify-self: center;
 }
 
-.title.move-up{
-  transform: translateY(calc(-40vh ));
-  transition: .7s;
+.title.move-up {
+  transform: translateY(calc(-40vh));
+  transition: 0.7s;
 }
 
-.title.move-up.fix{
+.title.move-up.fix {
   position: absolute;
 }
-.fade-in{
-  animation: fadeInAnimation ease-in .4s;
+.fade-in {
+  animation: fadeInAnimation ease-in 0.4s;
 }
 
 @keyframes fadeInAnimation {
   0% {
-      opacity: 0;
+    opacity: 0;
   }
   100% {
-      opacity: 1;
-   }
+    opacity: 1;
+  }
 }

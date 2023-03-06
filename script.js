@@ -1,4 +1,3 @@
-
 const gameboard = (() => {
   const container = document.querySelector(".game-board");
 
@@ -33,65 +32,66 @@ const SecondPlayer = player("Avery", "O");
 
 const DOMController = (() => {
   const resetButton = document.querySelector(".reset-btn");
-    const winnerDiv = document.querySelector(".winner-info");
-    const playerInfo = document.querySelector(".player-info");
+  const gameInfo = document.querySelector(".game-info");
 
-    // use visibility + opacity instead of display:none for animation purposes
-    const visiblityOn = (element) => {
-      element.style.visiblity = 'visible';
-      element.style.opacity = '1';
-    } 
+  // use visibility + opacity instead of display:none for animation purposes
+  const visiblityOn = (element) => {
+    element.style.visiblity = "visible";
+    element.style.opacity = "1";
+  };
 
-    const visiblityOff = (element) => {
-      element.style.visiblity = 'hidden';
-      element.style.opacity = '0';
-    }
+  const visiblityOff = (element) => {
+    element.style.visiblity = "hidden";
+    element.style.opacity = "0";
+  };
 
-const initializeStartScreen = () => {
-  const gameDiv = document.querySelector(".game");
-  const startButton = document.querySelector('.start-btn');
-  const title = document.querySelector('.title');
-  visiblityOff(gameDiv);
-  visiblityOff(resetButton);
-  visiblityOn(startButton);
-  startButton.addEventListener('click', () => {
-    title.classList.add('move-up');
-    visiblityOff(startButton);
-    visiblityOn(gameDiv);
-    
-    setTimeout(() => {
-      gameDiv.classList.add('fade-in');
-      game.startGame();
-     }, .7 * 1000);
-    
-  })
-  // fixes the title at the top of the screen
-  title.classList.add('fix');
-}
+  const initializeStartScreen = () => {
+    const gameDiv = document.querySelector(".game");
+    const startButton = document.querySelector(".start-btn");
+    const title = document.querySelector(".title");
+    visiblityOff(gameDiv);
+    visiblityOff(resetButton);
+    visiblityOn(startButton);
+    startButton.addEventListener("click", () => {
+      title.classList.add("move-up");
+      visiblityOff(startButton);
+      visiblityOn(gameDiv);
+
+      setTimeout(() => {
+        gameDiv.classList.add("fade-in");
+        game.startGame();
+      }, 0.7 * 1000);
+    });
+    // fixes the title at the top of the screen
+    title.classList.add("fix");
+  };
 
   const initializeGameScreen = () => {
-    visiblityOff(winnerDiv);
+    visiblityOff(gameInfo);
     visiblityOff(resetButton);
   };
 
   const getPlayerInfo = () => {};
 
   const displayNextPlayer = (nextPlayer) => {
-    visiblityOn(playerInfo);
-    playerInfo.textContent = `${nextPlayer}'s turn`;
+    visiblityOn(gameInfo);
+    gameInfo.textContent = `${nextPlayer}'s turn`;
   };
 
   const displayWinner = (winner, message) => {
-    visiblityOn(winnerDiv);
-    visiblityOff(playerInfo);
-
     // if there's no winner and the board is full, log 'tie' message
     winner
-      ? (winnerDiv.textContent = `${winner} wins!`)
-      : (winnerDiv.textContent = `${message}`);
+      ? (gameInfo.textContent = `${winner} wins!`)
+      : (gameInfo.textContent = `${message}`);
   };
 
-  return { visiblityOn, initializeStartScreen, initializeGameScreen, displayNextPlayer, displayWinner };
+  return {
+    visiblityOn,
+    initializeStartScreen,
+    initializeGameScreen,
+    displayNextPlayer,
+    displayWinner,
+  };
 })();
 
 const game = ((playerOne, playerTwo) => {
@@ -170,7 +170,10 @@ const game = ((playerOne, playerTwo) => {
       }
       // 3 marks at the correct index combination = win
       if (k == 3) {
-        winningCells.forEach(winningCell => winningCell.style.backgroundColor = 'var(--light-grey)')
+        winningCells.forEach(
+          (winningCell) =>
+            (winningCell.style.backgroundColor = "var(--light-grey)")
+        );
         endGame(winner);
         winnerFlag = true;
         return true;
@@ -225,5 +228,5 @@ const game = ((playerOne, playerTwo) => {
   };
 
   DOMController.initializeStartScreen();
-  return { startGame }
+  return { startGame };
 })(FirstPlayer, SecondPlayer);
