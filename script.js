@@ -1,3 +1,4 @@
+
 const gameboard = (() => {
   const container = document.querySelector(".game-board");
 
@@ -24,7 +25,10 @@ const gameboard = (() => {
 const player = (name, mark) => {
   const getName = () => name;
   const getMark = () => mark;
-  return { getName, getMark };
+  const setName = (newName) => {
+    name = newName;
+  }
+  return { setName, getName, getMark };
 };
 
 const FirstPlayer = player("Kirk", "X");
@@ -33,6 +37,11 @@ const SecondPlayer = player("Avery", "O");
 const DOMController = (() => {
   const resetButton = document.querySelector(".reset-btn");
   const gameInfo = document.querySelector(".game-info");
+  const playerSelection = document.querySelector(".player-selection");
+  const playerInfo = document.querySelector(".player-info");
+  const startButton = document.querySelector(".start-btn");
+  const playButton = document.querySelector(".play-btn");
+  const gameDiv = document.querySelector(".game");
 
   // use visibility + opacity instead of display:none for animation purposes
   const visiblityOn = (element) => {
@@ -45,21 +54,28 @@ const DOMController = (() => {
     element.style.opacity = "0";
   };
 
+  const displayOff = (element) => {
+    element.style.display = 'none';
+  }
+
+  const displayOn = (element) => {
+    element.style.display = 'flex';
+  }
+
   const initializeStartScreen = () => {
-    const gameDiv = document.querySelector(".game");
-    const startButton = document.querySelector(".start-btn");
     const title = document.querySelector(".title");
     visiblityOff(gameDiv);
-    visiblityOff(resetButton);
+    displayOff(resetButton);
+    displayOff(playerSelection);
+    displayOff(playerInfo);
+    displayOff(playButton);
     visiblityOn(startButton);
     startButton.addEventListener("click", () => {
-      visiblityOff(startButton);
+      displayOff(startButton);
+      
       title.classList.add("move-up");
-      visiblityOn(gameDiv);
-
       setTimeout(() => {
-        gameDiv.classList.add("fade-in");
-        game.startGame();
+        setupScreen();
       }, 0.7 * 1000);
     });
     // fixes the title at the top of the screen
@@ -67,11 +83,50 @@ const DOMController = (() => {
   };
 
   const initializeGameScreen = () => {
-    visiblityOff(gameInfo);
+    // visiblityOff(gameInfo);
     visiblityOff(resetButton);
   };
 
-  const getPlayerInfo = () => {};
+  const setupScreen = () => {
+    
+    displayOff(playButton);
+    visiblityOff(startButton);
+    displayOn(playerSelection);
+
+    const playerVsPlayer = document.querySelector('#vs_player');
+    const playerVsComputer = document.querySelector('#vs_computer');
+
+    playerVsPlayer.addEventListener('click', () => {
+      displayOn(playerInfo);
+      displayOn(playButton);
+    })
+
+    playerVsComputer.addEventListener('click', () => {
+      displayOff(playerInfo);
+    })
+
+    playButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      getPlayerInfo();
+      visiblityOn(gameDiv);
+      displayOff(playerSelection);
+      displayOff(playerInfo);
+      displayOff(playButton);
+      setTimeout(() => {
+        gameDiv.classList.add("fade-in");
+        game.startGame();
+      }, 0.4 * 1000);
+    })
+  }
+
+  const getPlayerInfo = () => {
+    const playerOneInput = document.querySelector('#playerOne');
+    const playerTwoInput = document.querySelector('#playerTwo');
+
+
+    console.log(playerOneInput.value);
+    console.log(playerTwoInput.value);
+  }
 
   const displayNextPlayer = (nextPlayer) => {
     visiblityOn(gameInfo);

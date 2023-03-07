@@ -112,13 +112,17 @@ button {
   background-color: var(--green);
 }
 
-button.start-btn {
+button.start-btn, button.play-btn {
   background-color: var(--cream);
 }
 
-button.start-btn:hover {
+button.start-btn:hover, button.play-btn:hover {
   cursor: pointer;
   background-color: var(--dark-cream);
+}
+
+button.play-btn {
+  text-align: center;
 }
 
 button.reset-btn {
@@ -180,4 +184,57 @@ button.reset-btn:hover {
   100% {
     opacity: 1;
   }
+}
+
+.vs-option {
+  width: 70px;
+  height: 70px;
+  padding: 5px;
+}
+
+input[type="radio"] {
+  display: none;
+}
+
+input:checked+img {
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0 0 0 3px var(--cream);
+  outline: none;
+  transition: .3s;
+  
+}
+
+.player-selection {
+  display: flex;
+  gap: 3rem;
+  position: fixed;
+  top: 20%;
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  padding-top: 4rem;
+}
+
+.player-info > label{
+  font-size: 14px;
+  margin-top: 13px;
+  margin-bottom: 3px;
+}
+
+.player-info > input {
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px #b2bac7;
+  outline: none;
+  line-height: 8px;
+  font-size: 16px;
+  padding: 2px 5px;
+}
+
+.player-info > input:focus {
+  box-shadow: 0 0 0 3px var(--cream);
+  
 }
