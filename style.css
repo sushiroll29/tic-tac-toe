@@ -137,7 +137,7 @@ button.reset-btn:hover {
   align-items: center;
   gap: 20px;
   position: relative;
-  padding-top: 1.5rem;
+  padding-top: 80px;
 }
 
 .player-info,
@@ -147,12 +147,20 @@ button.reset-btn:hover {
   margin-bottom: 0.8rem;
 }
 
+
+
 .title,
 .start {
   justify-self: center;
+  position: fixed;
+}
+
+.title{
+  top: 30%;
 }
 
 .title.move-up {
+  top: 40%;
   transform: translateY(calc(-40vh));
   transition: 0.7s;
 }

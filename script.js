@@ -53,8 +53,8 @@ const DOMController = (() => {
     visiblityOff(resetButton);
     visiblityOn(startButton);
     startButton.addEventListener("click", () => {
-      title.classList.add("move-up");
       visiblityOff(startButton);
+      title.classList.add("move-up");
       visiblityOn(gameDiv);
 
       setTimeout(() => {
