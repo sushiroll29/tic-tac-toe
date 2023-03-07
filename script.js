@@ -31,10 +31,8 @@ const player = (name, mark) => {
   return { setName, getName, getMark };
 };
 
-const FirstPlayer = player("Kirk", "X");
-const SecondPlayer = player("Avery", "O");
-
 const DOMController = (() => {
+  const endingButtons = document.querySelector(".ending-btns");
   const resetButton = document.querySelector(".reset-btn");
   const gameInfo = document.querySelector(".game-info");
   const playerSelection = document.querySelector(".player-selection");
@@ -42,6 +40,7 @@ const DOMController = (() => {
   const startButton = document.querySelector(".start-btn");
   const playButton = document.querySelector(".play-btn");
   const gameDiv = document.querySelector(".game");
+  let playerNames = [];
 
   // use visibility + opacity instead of display:none for animation purposes
   const visiblityOn = (element) => {
@@ -65,7 +64,7 @@ const DOMController = (() => {
   const initializeStartScreen = () => {
     const title = document.querySelector(".title");
     visiblityOff(gameDiv);
-    displayOff(resetButton);
+    displayOff(endingButtons);
     displayOff(playerSelection);
     displayOff(playerInfo);
     displayOff(playButton);
@@ -84,7 +83,7 @@ const DOMController = (() => {
 
   const initializeGameScreen = () => {
     // visiblityOff(gameInfo);
-    visiblityOff(resetButton);
+    visiblityOff(endingButtons);
   };
 
   const setupScreen = () => {
@@ -107,7 +106,6 @@ const DOMController = (() => {
 
     playButton.addEventListener('click', (e) => {
       e.preventDefault();
-      getPlayerInfo();
       visiblityOn(gameDiv);
       displayOff(playerSelection);
       displayOff(playerInfo);
@@ -120,12 +118,16 @@ const DOMController = (() => {
   }
 
   const getPlayerInfo = () => {
+    // let playerNames = [];
     const playerOneInput = document.querySelector('#playerOne');
     const playerTwoInput = document.querySelector('#playerTwo');
 
-
-    console.log(playerOneInput.value);
-    console.log(playerTwoInput.value);
+    playerOneInput.value ?
+      playerNames.push(playerOneInput.value) : playerNames.push('Player 1');
+    playerTwoInput.value ?
+      playerNames.push(playerTwoInput.value) : playerNames.push('Player 2');
+    
+    return playerNames;
   }
 
   const displayNextPlayer = (nextPlayer) => {
@@ -162,10 +164,14 @@ const DOMController = (() => {
     displayWinner,
     addCellInteraction,
     removeCellInteraction,
+    getPlayerInfo
   };
 })();
 
-const game = ((playerOne, playerTwo) => {
+const game = (() => {
+  const playerOne = player('', "X");
+  const playerTwo = player('', "O");
+
   let curentPlayer;
   let playerTwoTurn = false;
 
@@ -175,6 +181,8 @@ const game = ((playerOne, playerTwo) => {
   };
 
   const getCurrentPlayer = () => {
+    playerOne.setName(DOMController.getPlayerInfo()[0]);
+  playerTwo.setName(DOMController.getPlayerInfo()[1]);
     if (playerTwoTurn) {
       curentPlayer = playerTwo;
       return playerTwo;
@@ -192,7 +200,10 @@ const game = ((playerOne, playerTwo) => {
 
   const resetGame = () => {
     const resetButton = document.querySelector(".reset-btn");
-    DOMController.visiblityOn(resetButton);
+    const endingButtons = document.querySelector(".ending-btns");
+    DOMController.visiblityOn(endingButtons);
+    
+    endingButtons.style.display = 'flex';
 
     resetButton.addEventListener("click", () => {
       gameboard.resetGrid();
@@ -260,8 +271,8 @@ const game = ((playerOne, playerTwo) => {
   const cellClickHandler = (e) => {
     const cell = e.target;
     getCurrentPlayer();
-
-    if (playerTwoTurn) {
+    console.log(curentPlayer.getName());
+        if (playerTwoTurn) {
       cell.textContent = playerTwo.getMark();
       cell.classList.add("O");
       DOMController.displayNextPlayer(playerOne.getMark());
@@ -271,8 +282,8 @@ const game = ((playerOne, playerTwo) => {
       DOMController.displayNextPlayer(playerTwo.getMark());
     }
     //
-    // checkWinner(curentPlayer.getMark(), curentPlayer.getName());
-    checkWinner(curentPlayer.getMark(), curentPlayer.getMark());
+    checkWinner(curentPlayer.getMark(), curentPlayer.getName());
+    // checkWinner(curentPlayer.getMark(), curentPlayer.getMark());
     swapTurn();
   };
 
@@ -286,4 +297,4 @@ const game = ((playerOne, playerTwo) => {
 
   DOMController.initializeStartScreen();
   return { startGame };
-})(FirstPlayer, SecondPlayer);
+})();
