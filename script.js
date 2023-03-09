@@ -43,6 +43,7 @@ const DOMController = (() => {
   const playButton = document.querySelector(".play-btn");
   const gameDiv = document.querySelector(".game");
   let playerNames = [];
+  let vsComputer;
 
   // using visibility + opacity instead of display:none on some items for animation purposes
   const visiblityOn = (element) => {
@@ -96,11 +97,13 @@ const DOMController = (() => {
     const playerVsComputer = document.querySelector("#vs_computer");
 
     playerVsPlayer.addEventListener("click", () => {
+      vsComputer = false;
       displayOn(playerInfo);
       visiblityOn(playButton);
     });
 
     playerVsComputer.addEventListener("click", () => {
+      vsComputer = true;
       displayOff(playerInfo);
       visiblityOn(playButton);
     });
@@ -137,6 +140,8 @@ const DOMController = (() => {
     return playerNames;
   };
 
+  const getVs = () => vsComputer;
+
   const displayNextPlayer = (nextPlayer) => {
     visiblityOn(gameInfo);
     gameInfo.textContent = `${nextPlayer}'s turn`;
@@ -172,6 +177,7 @@ const DOMController = (() => {
     addCellInteraction,
     removeCellInteraction,
     getNameInfo,
+    getVs,
   };
 })();
 
@@ -183,6 +189,7 @@ const game = (() => {
   let curentPlayer;
   let playerTwoTurn = false;
   let win = false;
+  let vsComputer;
 
   const swapTurn = () => {
     playerTwoTurn = !playerTwoTurn;
@@ -293,15 +300,18 @@ const game = (() => {
     if (e.target.textContent === "") {
       getCurrentPlayer();
       if (playerTwoTurn) {
-        if (playerTwo.getName() !== "Computer")
+        if (DOMController.getVs()) {
+          swapTurn();
+        } else {
           cell.textContent = playerTwo.getMark();
-        cell.classList.add("O");
-        DOMController.displayNextPlayer(playerOne.getMark());
+          cell.classList.add("O");
+          DOMController.displayNextPlayer(playerOne.getMark());
+        }
       } else {
         cell.textContent = playerOne.getMark();
         cell.classList.add("X");
         DOMController.displayNextPlayer(playerTwo.getMark());
-        if (playerTwo.getName() === "Computer") {
+        if (DOMController.getVs()) {
           checkWinner(curentPlayer.getMark(), curentPlayer.getName());
           if (!win) {
             setTimeout(() => {
@@ -310,11 +320,10 @@ const game = (() => {
               checkWinner(curentPlayer.getMark(), curentPlayer.getName());
               swapTurn();
               return;
-            }, 1000);
+            }, 0.5 * 1000);
           }
         }
       }
-      // copmuterMove();
       checkWinner(curentPlayer.getMark(), curentPlayer.getName());
       swapTurn();
     }
@@ -324,19 +333,16 @@ const game = (() => {
     const cells = document.querySelectorAll(".cell");
     let emptyCells = [];
     let cellsArr = Array.from(cells);
-    // console.log(cellsArr)
     cellsArr.forEach((cell) => {
       if (!isCellFilled(cell)) {
-        // console.log(cellsArr.indexOf(cell))
         emptyCells.push(cell);
       }
     });
-    // console.log(Math.floor(Math.random() * emptyCells.length));
-    console.log(emptyCells);
-    let x = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    // console.log(x);
-    x.classList.add("O");
-    x.textContent = "O";
+
+    let computerChoice =
+      emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    computerChoice.classList.add("O");
+    computerChoice.textContent = "O";
   };
 
   const startGame = () => {
