@@ -32,7 +32,6 @@ const player = (name, mark) => {
   return { setName, getName, getMark };
 };
 
-
 // DISPLAY CONTROLLER
 const DOMController = (() => {
   const endingButtons = document.querySelector(".ending-btns");
@@ -103,6 +102,7 @@ const DOMController = (() => {
 
     playerVsComputer.addEventListener("click", () => {
       displayOff(playerInfo);
+      visiblityOn(playButton);
     });
 
     playButton.addEventListener("click", (e) => {
@@ -118,16 +118,21 @@ const DOMController = (() => {
     });
   };
 
-  const getPlayerInfo = () => {
-    const playerOneInput = document.querySelector("#playerOne");
-    const playerTwoInput = document.querySelector("#playerTwo");
+  const getNameInfo = () => {
+    const optionVsPlayer = document.querySelector("#vs_player");
+    if (optionVsPlayer.checked) {
+      const playerOneInput = document.querySelector("#playerOne");
+      const playerTwoInput = document.querySelector("#playerTwo");
 
-    playerOneInput.value
-      ? playerNames.push(playerOneInput.value)
-      : playerNames.push("Player 1");
-    playerTwoInput.value
-      ? playerNames.push(playerTwoInput.value)
-      : playerNames.push("Player 2");
+      playerOneInput.value
+        ? playerNames.push(playerOneInput.value)
+        : playerNames.push("Player 1");
+      playerTwoInput.value
+        ? playerNames.push(playerTwoInput.value)
+        : playerNames.push("Player 2");
+    } else {
+      playerNames.push("Player", "Computer");
+    }
 
     return playerNames;
   };
@@ -166,7 +171,7 @@ const DOMController = (() => {
     displayWinner,
     addCellInteraction,
     removeCellInteraction,
-    getPlayerInfo,
+    getNameInfo,
   };
 })();
 
@@ -177,6 +182,7 @@ const game = (() => {
 
   let curentPlayer;
   let playerTwoTurn = false;
+  let win = false;
 
   const swapTurn = () => {
     playerTwoTurn = !playerTwoTurn;
@@ -184,8 +190,8 @@ const game = (() => {
   };
 
   const getCurrentPlayer = () => {
-    playerOne.setName(DOMController.getPlayerInfo()[0]);
-    playerTwo.setName(DOMController.getPlayerInfo()[1]);
+    playerOne.setName(DOMController.getNameInfo()[0]);
+    playerTwo.setName(DOMController.getNameInfo()[1]);
     if (playerTwoTurn) {
       curentPlayer = playerTwo;
       return playerTwo;
@@ -209,6 +215,7 @@ const game = (() => {
 
     resetButton.addEventListener("click", () => {
       gameboard.resetGrid();
+      win = false;
       startGame();
     });
   };
@@ -218,14 +225,15 @@ const game = (() => {
 
     menuButton.addEventListener("click", () => {
       // DOMController.setupScreen();
-    })
-  }
+    });
+  };
 
   // checks if all the board cells are filled
   const checkTie = () => {
     const cells = document.querySelectorAll(".cell");
     let cellsArr = Array.from(cells);
     if (cellsArr.every(isCellFilled)) {
+      win = true;
       DOMController.displayWinner("", "It's a tie!");
       resetGame();
       // backToMenu();
@@ -267,6 +275,7 @@ const game = (() => {
           (winningCell) =>
             (winningCell.style.backgroundColor = "var(--light-grey)")
         );
+        win = true;
         endGame(winner);
         winnerFlag = true;
         return true;
@@ -281,19 +290,53 @@ const game = (() => {
 
   const cellClickHandler = (e) => {
     const cell = e.target;
-    getCurrentPlayer();
-    if (playerTwoTurn) {
-      cell.textContent = playerTwo.getMark();
-      cell.classList.add("O");
-      DOMController.displayNextPlayer(playerOne.getMark());
-    } else {
-      cell.textContent = playerOne.getMark();
-      cell.classList.add("X");
-      DOMController.displayNextPlayer(playerTwo.getMark());
+    if (e.target.textContent === "") {
+      getCurrentPlayer();
+      if (playerTwoTurn) {
+        if (playerTwo.getName() !== "Computer")
+          cell.textContent = playerTwo.getMark();
+        cell.classList.add("O");
+        DOMController.displayNextPlayer(playerOne.getMark());
+      } else {
+        cell.textContent = playerOne.getMark();
+        cell.classList.add("X");
+        DOMController.displayNextPlayer(playerTwo.getMark());
+        if (playerTwo.getName() === "Computer") {
+          checkWinner(curentPlayer.getMark(), curentPlayer.getName());
+          if (!win) {
+            setTimeout(() => {
+              copmuterMove();
+              DOMController.displayNextPlayer(playerOne.getMark());
+              checkWinner(curentPlayer.getMark(), curentPlayer.getName());
+              swapTurn();
+              return;
+            }, 1000);
+          }
+        }
+      }
+      // copmuterMove();
+      checkWinner(curentPlayer.getMark(), curentPlayer.getName());
+      swapTurn();
     }
-    //
-    checkWinner(curentPlayer.getMark(), curentPlayer.getName());
-    swapTurn();
+  };
+
+  const copmuterMove = () => {
+    const cells = document.querySelectorAll(".cell");
+    let emptyCells = [];
+    let cellsArr = Array.from(cells);
+    // console.log(cellsArr)
+    cellsArr.forEach((cell) => {
+      if (!isCellFilled(cell)) {
+        // console.log(cellsArr.indexOf(cell))
+        emptyCells.push(cell);
+      }
+    });
+    // console.log(Math.floor(Math.random() * emptyCells.length));
+    console.log(emptyCells);
+    let x = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    // console.log(x);
+    x.classList.add("O");
+    x.textContent = "O";
   };
 
   const startGame = () => {
