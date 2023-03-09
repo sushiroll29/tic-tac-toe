@@ -1,4 +1,4 @@
-
+// GAMEBOARD
 const gameboard = (() => {
   const container = document.querySelector(".game-board");
 
@@ -22,56 +22,59 @@ const gameboard = (() => {
   return { getGameBoard, createGrid, resetGrid };
 })();
 
+// PLAYER
 const player = (name, mark) => {
   const getName = () => name;
   const getMark = () => mark;
   const setName = (newName) => {
     name = newName;
-  }
+  };
   return { setName, getName, getMark };
 };
 
+
+// DISPLAY CONTROLLER
 const DOMController = (() => {
   const endingButtons = document.querySelector(".ending-btns");
   const resetButton = document.querySelector(".reset-btn");
   const gameInfo = document.querySelector(".game-info");
   const playerSelection = document.querySelector(".player-selection");
   const playerInfo = document.querySelector(".player-info");
-  const startButton = document.querySelector(".start-btn");
+  const startButton = document.querySelector(".start");
   const playButton = document.querySelector(".play-btn");
   const gameDiv = document.querySelector(".game");
   let playerNames = [];
 
-  // use visibility + opacity instead of display:none for animation purposes
+  // using visibility + opacity instead of display:none on some items for animation purposes
   const visiblityOn = (element) => {
-    element.style.visiblity = "visible";
+    element.style.visibility = "visible";
     element.style.opacity = "1";
   };
 
   const visiblityOff = (element) => {
-    element.style.visiblity = "hidden";
+    element.style.visibility = "hidden";
     element.style.opacity = "0";
   };
 
   const displayOff = (element) => {
-    element.style.display = 'none';
-  }
+    element.style.display = "none";
+  };
 
   const displayOn = (element) => {
-    element.style.display = 'flex';
-  }
+    element.style.display = "flex";
+  };
 
   const initializeStartScreen = () => {
     const title = document.querySelector(".title");
     visiblityOff(gameDiv);
-    displayOff(endingButtons);
+    visiblityOff(endingButtons);
     displayOff(playerSelection);
     displayOff(playerInfo);
-    displayOff(playButton);
+    visiblityOff(playButton);
     visiblityOn(startButton);
     startButton.addEventListener("click", () => {
-      displayOff(startButton);
-      
+      visiblityOff(startButton);
+
       title.classList.add("move-up");
       setTimeout(() => {
         setupScreen();
@@ -82,53 +85,52 @@ const DOMController = (() => {
   };
 
   const initializeGameScreen = () => {
-    // visiblityOff(gameInfo);
     visiblityOff(endingButtons);
   };
 
   const setupScreen = () => {
-    
-    displayOff(playButton);
+    visiblityOff(playButton);
     visiblityOff(startButton);
     displayOn(playerSelection);
 
-    const playerVsPlayer = document.querySelector('#vs_player');
-    const playerVsComputer = document.querySelector('#vs_computer');
+    const playerVsPlayer = document.querySelector("#vs_player");
+    const playerVsComputer = document.querySelector("#vs_computer");
 
-    playerVsPlayer.addEventListener('click', () => {
+    playerVsPlayer.addEventListener("click", () => {
       displayOn(playerInfo);
-      displayOn(playButton);
-    })
+      visiblityOn(playButton);
+    });
 
-    playerVsComputer.addEventListener('click', () => {
+    playerVsComputer.addEventListener("click", () => {
       displayOff(playerInfo);
-    })
+    });
 
-    playButton.addEventListener('click', (e) => {
+    playButton.addEventListener("click", (e) => {
       e.preventDefault();
       visiblityOn(gameDiv);
       displayOff(playerSelection);
       displayOff(playerInfo);
-      displayOff(playButton);
+      visiblityOff(playButton);
       setTimeout(() => {
         gameDiv.classList.add("fade-in");
         game.startGame();
       }, 0.4 * 1000);
-    })
-  }
+    });
+  };
 
   const getPlayerInfo = () => {
-    // let playerNames = [];
-    const playerOneInput = document.querySelector('#playerOne');
-    const playerTwoInput = document.querySelector('#playerTwo');
+    const playerOneInput = document.querySelector("#playerOne");
+    const playerTwoInput = document.querySelector("#playerTwo");
 
-    playerOneInput.value ?
-      playerNames.push(playerOneInput.value) : playerNames.push('Player 1');
-    playerTwoInput.value ?
-      playerNames.push(playerTwoInput.value) : playerNames.push('Player 2');
-    
+    playerOneInput.value
+      ? playerNames.push(playerOneInput.value)
+      : playerNames.push("Player 1");
+    playerTwoInput.value
+      ? playerNames.push(playerTwoInput.value)
+      : playerNames.push("Player 2");
+
     return playerNames;
-  }
+  };
 
   const displayNextPlayer = (nextPlayer) => {
     visiblityOn(gameInfo);
@@ -164,13 +166,14 @@ const DOMController = (() => {
     displayWinner,
     addCellInteraction,
     removeCellInteraction,
-    getPlayerInfo
+    getPlayerInfo,
   };
 })();
 
+// GAME
 const game = (() => {
-  const playerOne = player('', "X");
-  const playerTwo = player('', "O");
+  const playerOne = player("", "X");
+  const playerTwo = player("", "O");
 
   let curentPlayer;
   let playerTwoTurn = false;
@@ -182,7 +185,7 @@ const game = (() => {
 
   const getCurrentPlayer = () => {
     playerOne.setName(DOMController.getPlayerInfo()[0]);
-  playerTwo.setName(DOMController.getPlayerInfo()[1]);
+    playerTwo.setName(DOMController.getPlayerInfo()[1]);
     if (playerTwoTurn) {
       curentPlayer = playerTwo;
       return playerTwo;
@@ -196,20 +199,27 @@ const game = (() => {
     DOMController.displayWinner(winner);
     DOMController.removeCellInteraction(cellClickHandler);
     resetGame();
+    backToMenu();
   };
 
   const resetGame = () => {
     const resetButton = document.querySelector(".reset-btn");
     const endingButtons = document.querySelector(".ending-btns");
     DOMController.visiblityOn(endingButtons);
-    
-    endingButtons.style.display = 'flex';
 
     resetButton.addEventListener("click", () => {
       gameboard.resetGrid();
       startGame();
     });
   };
+
+  const backToMenu = () => {
+    const menuButton = document.querySelector(".menu-btn");
+
+    menuButton.addEventListener("click", () => {
+      // DOMController.setupScreen();
+    })
+  }
 
   // checks if all the board cells are filled
   const checkTie = () => {
@@ -218,6 +228,7 @@ const game = (() => {
     if (cellsArr.every(isCellFilled)) {
       DOMController.displayWinner("", "It's a tie!");
       resetGame();
+      // backToMenu();
     }
   };
 
@@ -271,8 +282,7 @@ const game = (() => {
   const cellClickHandler = (e) => {
     const cell = e.target;
     getCurrentPlayer();
-    console.log(curentPlayer.getName());
-        if (playerTwoTurn) {
+    if (playerTwoTurn) {
       cell.textContent = playerTwo.getMark();
       cell.classList.add("O");
       DOMController.displayNextPlayer(playerOne.getMark());
@@ -283,7 +293,6 @@ const game = (() => {
     }
     //
     checkWinner(curentPlayer.getMark(), curentPlayer.getName());
-    // checkWinner(curentPlayer.getMark(), curentPlayer.getMark());
     swapTurn();
   };
 

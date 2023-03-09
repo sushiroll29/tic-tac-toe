@@ -141,7 +141,7 @@ button.reset-btn:hover {
   align-items: center;
   gap: 20px;
   position: relative;
-  padding-top: 80px;
+  /* padding-top: 80px; */
 }
 
 .player-info,
@@ -210,12 +210,13 @@ input:checked+img {
   gap: 3rem;
   position: fixed;
   top: 20%;
+  padding-bottom: 2rem;
 }
 
 .player-info {
   display: flex;
   flex-direction: column;
-  padding-top: 4rem;
+  padding-top: 2rem;
 }
 
 .player-info > label{
