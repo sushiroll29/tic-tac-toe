@@ -1,15 +1,26 @@
 // GAMEBOARD
 const gameboard = (() => {
   const container = document.querySelector(".game-board");
+  let gameBoardGrid = [];
 
   const getGameBoard = () => container;
+  const getGameBoardGrid = () => gameBoardGrid;
 
   const createGrid = () => {
+    let j = 0;
+
     for (let i = 0; i < 9; i++) {
+      
       const cell = document.createElement("div");
       cell.classList.add("cell");
+      // assign a unique id to each board cell
+      cell.setAttribute('id', `${j}`);
+      gameBoardGrid.push(j);
+      j += 1;
       container.appendChild(cell);
     }
+
+
   };
 
   const resetGrid = () => {
@@ -17,9 +28,27 @@ const gameboard = (() => {
     cells.forEach((cell) => {
       cell.remove();
     });
+    gameBoardGrid = [];
   };
 
-  return { getGameBoard, createGrid, resetGrid };
+  const winningGrid = (board, playerMark) => {
+    if (
+      (board[0] == playerMark && board[1] == playerMark && board[2] == playerMark) ||
+      (board[3] == playerMark && board[4] == playerMark && board[5] == playerMark) ||
+      (board[6] == playerMark && board[7] == playerMark && board[8] == playerMark) ||
+      (board[0] == playerMark && board[3] == playerMark && board[6] == playerMark) ||
+      (board[1] == playerMark && board[4] == playerMark && board[7] == playerMark) ||
+      (board[2] == playerMark && board[5] == playerMark && board[8] == playerMark) ||
+      (board[0] == playerMark && board[4] == playerMark && board[8] == playerMark) ||
+      (board[2] == playerMark && board[4] == playerMark && board[6] == playerMark)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  return { getGameBoard, getGameBoardGrid, createGrid, resetGrid, winningGrid };
 })();
 
 // PLAYER
@@ -140,7 +169,7 @@ const DOMController = (() => {
     return playerNames;
   };
 
-  const getVs = () => vsComputer;
+  const computerOpponent = () => vsComputer;
 
   const displayNextPlayer = (nextPlayer) => {
     visiblityOn(gameInfo);
@@ -154,105 +183,7 @@ const DOMController = (() => {
       : (gameInfo.textContent = `${message}`);
   };
 
-  const addCellInteraction = (handlerFunction) => {
-    const cells = document.querySelectorAll(".cell");
-    cells.forEach((cell) => {
-      cell.addEventListener("click", handlerFunction, { once: true });
-    });
-  };
-
-  const removeCellInteraction = (handlerFunction) => {
-    const cells = document.querySelectorAll(".cell");
-    cells.forEach((cell) => {
-      cell.removeEventListener("click", handlerFunction, { once: true });
-    });
-  };
-
-  return {
-    visiblityOn,
-    initializeStartScreen,
-    initializeGameScreen,
-    displayNextPlayer,
-    displayWinner,
-    addCellInteraction,
-    removeCellInteraction,
-    getNameInfo,
-    getVs,
-  };
-})();
-
-// GAME
-const game = (() => {
-  const playerOne = player("", "X");
-  const playerTwo = player("", "O");
-
-  let curentPlayer;
-  let playerTwoTurn = false;
-  let win = false;
-  let vsComputer;
-
-  const swapTurn = () => {
-    playerTwoTurn = !playerTwoTurn;
-    getCurrentPlayer();
-  };
-
-  const getCurrentPlayer = () => {
-    playerOne.setName(DOMController.getNameInfo()[0]);
-    playerTwo.setName(DOMController.getNameInfo()[1]);
-    if (playerTwoTurn) {
-      curentPlayer = playerTwo;
-      return playerTwo;
-    } else {
-      curentPlayer = playerOne;
-      return playerOne;
-    }
-  };
-
-  const endGame = (winner) => {
-    DOMController.displayWinner(winner);
-    DOMController.removeCellInteraction(cellClickHandler);
-    resetGame();
-    backToMenu();
-  };
-
-  const resetGame = () => {
-    const resetButton = document.querySelector(".reset-btn");
-    const endingButtons = document.querySelector(".ending-btns");
-    DOMController.visiblityOn(endingButtons);
-
-    resetButton.addEventListener("click", () => {
-      gameboard.resetGrid();
-      win = false;
-      startGame();
-    });
-  };
-
-  const backToMenu = () => {
-    const menuButton = document.querySelector(".menu-btn");
-
-    menuButton.addEventListener("click", () => {
-      // DOMController.setupScreen();
-    });
-  };
-
-  // checks if all the board cells are filled
-  const checkTie = () => {
-    const cells = document.querySelectorAll(".cell");
-    let cellsArr = Array.from(cells);
-    if (cellsArr.every(isCellFilled)) {
-      win = true;
-      DOMController.displayWinner("", "It's a tie!");
-      resetGame();
-      // backToMenu();
-    }
-  };
-
-  const isCellFilled = (cell) => {
-    return cell.textContent != "";
-  };
-
-  const checkWinner = (mark, winner) => {
-    let winnerFlag = false;
+  const colorWinnerCells = (mark) => {
     const winPossibilities = [
       [0, 1, 2],
       [3, 4, 5],
@@ -282,49 +213,221 @@ const game = (() => {
           (winningCell) =>
             (winningCell.style.backgroundColor = "var(--light-grey)")
         );
-        win = true;
-        endGame(winner);
-        winnerFlag = true;
-        return true;
       }
     });
-    //if no winner was found, check for a tie
-    if (!winnerFlag) {
-      checkTie();
-      return true;
+  };
+
+  const addCellInteraction = (handlerFunction) => {
+    const cells = document.querySelectorAll(".cell");
+    cells.forEach((cell) => {
+      cell.addEventListener("click", handlerFunction, { once: true });
+    });
+  };
+
+  const removeCellInteraction = (handlerFunction) => {
+    const cells = document.querySelectorAll(".cell");
+    cells.forEach((cell) => {
+      cell.removeEventListener("click", handlerFunction, { once: true });
+    });
+  };
+
+  return {
+    visiblityOn,
+    initializeStartScreen,
+    initializeGameScreen,
+    displayNextPlayer,
+    displayWinner,
+    addCellInteraction,
+    removeCellInteraction,
+    getNameInfo,
+    computerOpponent,
+    colorWinnerCells
+  };
+})();
+
+// GAME
+const game = (() => {
+  const playerOne = player("", "X");
+  const playerTwo = player("", "O");
+  let board = gameboard.getGameBoardGrid();
+  let grid = gameboard.getGameBoard();
+
+  let curentPlayer;
+  let playerTwoTurn = false;
+  let finishGame = false;
+  // let vsComputer;
+
+  const swapTurn = () => {
+    playerTwoTurn = !playerTwoTurn;
+    getCurrentPlayer();
+  };
+
+  const getCurrentPlayer = () => {
+    playerOne.setName(DOMController.getNameInfo()[0]);
+    playerTwo.setName(DOMController.getNameInfo()[1]);
+    if (playerTwoTurn) {
+      curentPlayer = playerTwo;
+      return playerTwo;
+    } else {
+      curentPlayer = playerOne;
+      return playerOne;
     }
   };
 
+  const endGame = (player) => {
+    DOMController.displayWinner(player);
+    DOMController.removeCellInteraction(cellClickHandler);
+    resetGame();
+    backToMenu();
+  };
+
+  const resetGame = () => {
+    const resetButton = document.querySelector(".reset-btn");
+    const endingButtons = document.querySelector(".ending-btns");
+    DOMController.visiblityOn(endingButtons);
+
+    resetButton.addEventListener("click", () => {
+      gameboard.resetGrid();
+      board = gameboard.getGameBoardGrid();
+      finishGame = false;
+      startGame();
+    });
+  };
+
+  const backToMenu = () => {
+    const menuButton = document.querySelector(".menu-btn");
+
+    menuButton.addEventListener("click", () => {
+      // DOMController.setupScreen();
+    });
+  };
+
+  // checks if all the board cells are filled
+  const checkTie = () => {
+    if(availableCells(board).length === 0){
+      finishGame = true;
+      DOMController.displayWinner("", "It's a tie!");
+      resetGame();
+    }
+  };
+
+  const availableCells = (b) => {
+    return b.filter(x => x != 'X' && x != 'O')
+  }
+
+  const minimax = (b, player) => {
+    const arr = availableCells(b);
+    if(gameboard.winningGrid(b, playerOne.getMark())){
+      return {
+        score: -10
+      }
+    } else if(gameboard.winningGrid(b, playerTwo.getMark())){
+      return {
+        score: 10
+      }
+    } else if(arr.length === 0) {
+      return {
+        score: 0
+      }
+    }
+
+    const moves = [];
+     
+    for(let i = 0; i < arr.length; i++){
+      const move = {};
+      let g;
+      move.index = b[arr[i]];
+      b[arr[i]] = player.getMark();
+
+      if(player == playerTwo){
+        g = minimax(b, playerOne);
+        move.score = g.score;
+      } else {
+        g = minimax(b, playerTwo);
+        move.score = g.score;
+      }
+      b[arr[i]] = move.index;
+      moves.push(move);
+    }
+      let bestMove;
+      if(player == playerTwo){
+        let bestScore = -10000;
+        for(let i = 0; i < moves.length; i++){
+          if(moves[i].score > bestScore){
+            bestScore = moves[i].score;
+            bestMove = i;
+          }
+        }
+      } else {
+        let bestScore = 10000;
+        for(let i = 0; i < moves.length; i++){
+          if(moves[i].score < bestScore){
+            bestScore = moves[i].score;
+            bestMove = i;
+          }
+        }
+        
+      }
+    
+    return moves[bestMove];
+  }
+
+  
+
   const cellClickHandler = (e) => {
+    const index = Array.from(e.target.parentNode.children).indexOf(e.target);
     const cell = e.target;
     if (e.target.textContent === "") {
       getCurrentPlayer();
       if (playerTwoTurn) {
-        if (DOMController.getVs()) {
+        if (DOMController.computerOpponent()) {
           swapTurn();
         } else {
+          board[index] = "O";
           cell.textContent = playerTwo.getMark();
           cell.classList.add("O");
           DOMController.displayNextPlayer(playerOne.getMark());
         }
       } else {
+        board[index] = "X";
         cell.textContent = playerOne.getMark();
         cell.classList.add("X");
         DOMController.displayNextPlayer(playerTwo.getMark());
-        if (DOMController.getVs()) {
-          checkWinner(curentPlayer.getMark(), curentPlayer.getName());
-          if (!win) {
+        if (DOMController.computerOpponent()) {
+          if(gameboard.winningGrid(board, curentPlayer.getMark())){
+            finishGame = true;
+            DOMController.colorWinnerCells(curentPlayer.getMark());
+            endGame(curentPlayer.getName());
+            return true;
+          }
+          checkTie();
+          if (!finishGame) {
             setTimeout(() => {
-              copmuterMove();
+              // copmuterMove();
+              let AIMoveIndex = minimax(board, playerTwo).index;
+              board[AIMoveIndex] = "O";
+              let AIMoveCell = document.getElementById(`${AIMoveIndex}`);
+              AIMoveCell.classList.add("O");
+              AIMoveCell.textContent = "O";
               DOMController.displayNextPlayer(playerOne.getMark());
-              checkWinner(curentPlayer.getMark(), curentPlayer.getName());
-              swapTurn();
+
+              if(!gameboard.winningGrid(board, curentPlayer.getMark())){
+                checkTie();
+                swapTurn();
               return;
+              }
+              
             }, 0.5 * 1000);
           }
         }
       }
-      checkWinner(curentPlayer.getMark(), curentPlayer.getName());
+      if(gameboard.winningGrid(board, curentPlayer.getMark())){
+        finishGame = true;
+        DOMController.colorWinnerCells(curentPlayer.getMark());
+        endGame(curentPlayer.getName());
+        return true;
+      }
+      checkTie();
       swapTurn();
     }
   };
@@ -339,10 +442,10 @@ const game = (() => {
       }
     });
 
-    let computerChoice =
+    let computerMoveCell =
       emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    computerChoice.classList.add("O");
-    computerChoice.textContent = "O";
+      computerMoveCell.classList.add("O");
+      computerMoveCell.textContent = "O";
   };
 
   const startGame = () => {

@@ -88,6 +88,7 @@ h6 {
   font-family: "Shantell Sans", sans-serif;
   font-weight: 600;
   background-color: white;
+  /* transition: all 0.1s ease-in; */
 }
 
 .game-board > .cell.X {
