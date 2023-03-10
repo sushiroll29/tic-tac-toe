@@ -270,7 +270,6 @@ const DOMController = (() => {
     visiblityOn,
     visiblityOff,
     initializeStartScreen,
-    initializeGameScreen,
     displayNextPlayer,
     displayWinner,
     addCellInteraction,
