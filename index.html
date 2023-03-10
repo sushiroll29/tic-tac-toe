@@ -23,34 +23,67 @@
       </div>
       <div class="player-selection">
         <label for="vs_player">
-          <input type="radio" name="vs" id="vs_player">
-          <img class="vs-option" src="./vs_player.png" alt="player vs player icon">
+          <input type="radio" name="vs" id="vs_player" />
+          <img
+            class="vs-option"
+            src="./vs_player.png"
+            alt="player vs player icon"
+          />
         </label>
         <label for="vs_computer">
-          <input type="radio" name="vs" id="vs_computer">
-          <img class="vs-option" src="./vs_computer.png" alt="player vs computer icon">
+          <input type="radio" name="vs" id="vs_computer" />
+          <img
+            class="vs-option"
+            src="./vs_computer.png"
+            alt="player vs computer icon"
+          />
         </label>
       </div>
       <div class="player-info">
         <label for="playerOne">Player X:</label>
-        <input type="text" name="playerOne" id="playerOne" placeholder="Player 1">
+        <input
+          type="text"
+          name="playerOne"
+          id="playerOne"
+          placeholder="Player 1"
+        />
 
         <label for="playerTwo">Player O:</label>
-        <input type="text" name="playerTwo" id="playerTwo" placeholder="Player 2">
+        <input
+          type="text"
+          name="playerTwo"
+          id="playerTwo"
+          placeholder="Player 2"
+        />
+      </div>
+      <div class="difficulty">
+        <input
+          type="radio"
+          name="difficulty-option"
+          id="easy"
+          value="easy"
+          checked
+        />
+        <label for="easy" class="diff-option"> Easy </label>
 
-        
+        <input type="radio" name="difficulty-option" id="hard" value="hard" />
+        <label for="hard" class="diff-option"> Hard </label>
+        <input
+          type="radio"
+          name="difficulty-option"
+          id="difficult"
+          value="difficult"
+        />
       </div>
       <button class="play-btn" type="submit">Play</button>
       <div class="game">
-        <div class="game-board">
-        </div>
+        <div class="game-board"></div>
         <div class="game-info"></div>
       </div>
       <div class="ending-btns">
         <button class="reset-btn">Play again</button>
-        <button class="menu-btn">Back to menu</button>
+        <button class="back-btn">Back to start</button>
       </div>
-     
     </div>
   </body>
 </html>

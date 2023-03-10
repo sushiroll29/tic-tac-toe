@@ -113,11 +113,13 @@ button {
   background-color: var(--green);
 }
 
-button.start-btn, button.play-btn {
+button.start-btn,
+button.play-btn {
   background-color: var(--cream);
 }
 
-button.start-btn:hover, button.play-btn:hover {
+button.start-btn:hover,
+button.play-btn:hover {
   cursor: pointer;
   background-color: var(--dark-cream);
 }
@@ -130,7 +132,8 @@ button.reset-btn {
   background-color: var(--green);
 }
 
-button.reset-btn:hover {
+button.reset-btn:hover,
+button.back-btn:hover {
   cursor: pointer;
   background-color: var(--dark-green);
 }
@@ -152,15 +155,13 @@ button.reset-btn:hover {
   margin-bottom: 0.8rem;
 }
 
-
-
 .title,
 .start {
   justify-self: center;
   position: fixed;
 }
 
-.title{
+.title {
   top: 30%;
 }
 
@@ -197,13 +198,31 @@ input[type="radio"] {
   display: none;
 }
 
-input:checked+img {
+input:checked + img {
   border: none;
   border-radius: 3px;
   box-shadow: 0 0 0 3px var(--cream);
   outline: none;
-  transition: .3s;
-  
+  transition: 0.3s;
+}
+
+.diff-option {
+  border: none;
+  border-radius: 9px;
+  box-shadow: 0 0 0 3px var(--cream);
+  outline: none;
+  padding: 7px 14px;
+  color: var(--dark-grey);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#easy:checked + .diff-option,
+#hard:checked + .diff-option {
+  background-color: var(--cream);
+  outline: none;
+  transition: 0.3s;
+  color: white;
 }
 
 .player-selection {
@@ -220,7 +239,7 @@ input:checked+img {
   padding-top: 2rem;
 }
 
-.player-info > label{
+.player-info > label {
   font-size: 14px;
   margin-top: 13px;
   margin-bottom: 3px;
@@ -238,10 +257,15 @@ input:checked+img {
 
 .player-info > input:focus {
   box-shadow: 0 0 0 3px var(--cream);
-  
 }
 
 .ending-btns {
   display: flex;
-  gap: 1.5rem
+  gap: 1.5rem;
+}
+
+.difficulty {
+  display: flex;
+  gap: 3rem;
+  padding: 40px 0;
 }
