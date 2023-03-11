@@ -476,13 +476,13 @@ const game = (() => {
 
   const computerMove = () => {
     let emptyCells = [...availableCells(board)];
-
     // gets a random cell from the array of available cells
     let computerMoveIndex =
       emptyCells[Math.floor(Math.random() * emptyCells.length)];
     let computerMoveCell = document.getElementById(`${computerMoveIndex}`);
     computerMoveCell.classList.add("O");
     computerMoveCell.textContent = "O";
+    board[computerMoveIndex] = "O";
   };
 
   const startGame = () => {
