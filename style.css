@@ -248,7 +248,8 @@ input:checked + img {
 .player-info > input {
   border: none;
   border-radius: 3px;
-  box-shadow: 0 0 0 2px #b2bac7;
+  box-shadow: 0 0 0 3px #b2bac7;
+  -webkit-box-shadow: 0 0 3px #b2bac7;
   outline: none;
   line-height: 8px;
   font-size: 16px;
@@ -257,6 +258,7 @@ input:checked + img {
 
 .player-info > input:focus {
   box-shadow: 0 0 0 3px var(--cream);
+  -webkit-box-shadow: 0 0 3px var(--cream);
 }
 
 .ending-btns {
