@@ -108,7 +108,7 @@ const DOMController = (() => {
     element.style.display = "flex";
   };
 
-  const initializeStartScreen = () => {
+  const startScreen = () => {
     const title = document.querySelector(".title");
     visibilityOff(gameDiv);
     visibilityOff(endingButtons);
@@ -166,20 +166,7 @@ const DOMController = (() => {
     });
   };
 
-  const getDifficultyInfo = () => {
-    const optionVsComputer = document.querySelector("#vs_computer");
-    if (optionVsComputer.checked) {
-      const easyDifficulty = document.querySelector("#easy");
-      const hardDifficulty = document.querySelector("#hard");
-
-      if (easyDifficulty.checked) {
-        difficulty = "easy";
-      } else if (hardDifficulty.checked) {
-        difficulty = "hard";
-      }
-    }
-    return difficulty;
-  };
+  const computerOpponent = () => vsComputer;
 
   const getNameInfo = () => {
     const optionVsPlayer = document.querySelector("#vs_player");
@@ -200,7 +187,20 @@ const DOMController = (() => {
     return playerNames;
   };
 
-  const computerOpponent = () => vsComputer;
+  const getDifficultyInfo = () => {
+    const optionVsComputer = document.querySelector("#vs_computer");
+    if (optionVsComputer.checked) {
+      const easyDifficulty = document.querySelector("#easy");
+      const hardDifficulty = document.querySelector("#hard");
+
+      if (easyDifficulty.checked) {
+        difficulty = "easy";
+      } else if (hardDifficulty.checked) {
+        difficulty = "hard";
+      }
+    }
+    return difficulty;
+  };
 
   const displayNextPlayer = (nextPlayer) => {
     visibilityOn(gameInfo);
@@ -265,7 +265,7 @@ const DOMController = (() => {
   return {
     visibilityOn,
     visibilityOff,
-    initializeStartScreen,
+    startScreen,
     displayNextPlayer,
     displayWinner,
     addCellInteraction,
@@ -282,15 +282,17 @@ const DOMController = (() => {
 const game = (() => {
   const playerOne = player("", "X");
   const playerTwo = player("", "O");
-  let board = gameboard.getGameBoardGrid();
 
+  let board = gameboard.getGameBoardGrid();
   let curentPlayer;
   let playerTwoTurn = false;
   let finishGame = false;
 
-  const swapTurn = () => {
-    playerTwoTurn = !playerTwoTurn;
-    getCurrentPlayer();
+  const startGame = () => {
+    DOMController.displayNextPlayer(playerOne.getMark());
+    playerTwoTurn = false;
+    gameboard.createGrid();
+    DOMController.addCellInteraction(cellClickHandler);
   };
 
   const getCurrentPlayer = () => {
@@ -303,6 +305,11 @@ const game = (() => {
       curentPlayer = playerOne;
       return playerOne;
     }
+  };
+
+  const swapTurn = () => {
+    playerTwoTurn = !playerTwoTurn;
+    getCurrentPlayer();
   };
 
   const endGame = (player) => {
@@ -326,14 +333,6 @@ const game = (() => {
     });
   };
 
-  const backToStart = () => {
-    const backButton = document.querySelector(".back-btn");
-
-    backButton.addEventListener("click", () => {
-      location.reload();
-    });
-  };
-
   // checks if all the board cells are filled
   const checkTie = () => {
     if (availableCells(board).length === 0) {
@@ -348,7 +347,91 @@ const game = (() => {
     return brd.filter((x) => x != "X" && x != "O");
   };
 
-  //minimax algorithm
+  const cellClickHandler = (e) => {
+    const index = Array.from(e.target.parentNode.children).indexOf(e.target);
+    const cell = e.target;
+    // can only place a mark on a cell once
+    if (e.target.textContent === "") {
+      getCurrentPlayer();
+      if (playerTwoTurn) {
+        if (DOMController.computerOpponent()) {
+          swapTurn();
+        } else {
+          // human player 2
+          board[index] = "O";
+          cell.textContent = playerTwo.getMark();
+          cell.classList.add("O");
+          DOMController.displayNextPlayer(playerOne.getMark());
+        }
+      } else {
+        board[index] = "X";
+        cell.textContent = playerOne.getMark();
+        cell.classList.add("X");
+        DOMController.displayNextPlayer(playerTwo.getMark());
+        // computer player 2
+        if (DOMController.computerOpponent()) {
+          if (gameboard.winningGrid(board, curentPlayer.getMark())) {
+            finishGame = true;
+            DOMController.colorWinnerCells(curentPlayer.getMark());
+            endGame(curentPlayer.getName());
+            return true;
+          }
+          checkTie();
+          if (!finishGame) {
+            setTimeout(() => {
+              if (DOMController.getDifficultyInfo() === "hard") {
+                let AIMoveIndex = AIMove(board, playerTwo).index;
+                board[AIMoveIndex] = "O";
+                let AIMoveCell = document.getElementById(`${AIMoveIndex}`);
+                AIMoveCell.classList.add("O");
+                AIMoveCell.textContent = "O";
+                endComputerGameCheck(playerTwo, playerOne);
+              } else if (DOMController.getDifficultyInfo() === "easy") {
+                computerMove();
+                endComputerGameCheck(playerTwo, playerOne);
+              }
+            }, 0.5 * 1000);
+          }
+        }
+      }
+      if (gameboard.winningGrid(board, curentPlayer.getMark())) {
+        finishGame = true;
+        DOMController.colorWinnerCells(curentPlayer.getMark());
+        endGame(curentPlayer.getName());
+        return;
+      }
+      checkTie();
+      swapTurn();
+    }
+  };
+
+  const endComputerGameCheck = (currPlayer, otherPlayer) => {
+    if (gameboard.winningGrid(board, currPlayer.getMark())) {
+      finishGame = true;
+      DOMController.colorWinnerCells(currPlayer.getMark());
+      endGame(currPlayer.getName());
+      return;
+    } else {
+      DOMController.displayNextPlayer(otherPlayer.getMark());
+      checkTie();
+      swapTurn();
+      return;
+    }
+  };
+
+  // this is used for the easy difficulty mode
+  const computerMove = () => {
+    let emptyCells = [...availableCells(board)];
+    // gets a random cell from the array of available cells
+    let computerMoveIndex =
+      emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    let computerMoveCell = document.getElementById(`${computerMoveIndex}`);
+    computerMoveCell.classList.add("O");
+    computerMoveCell.textContent = "O";
+    board[computerMoveIndex] = "O";
+  };
+
+  //minimax algorithm - used for the hard difficulty mode
   const AIMove = (brd, player) => {
     const emptyCells = availableCells(brd);
     if (gameboard.winningGrid(brd, playerOne.getMark())) {
@@ -405,94 +488,13 @@ const game = (() => {
     return moves[bestMove];
   };
 
-  const cellClickHandler = (e) => {
-    const index = Array.from(e.target.parentNode.children).indexOf(e.target);
-    const cell = e.target;
-    if (e.target.textContent === "") {
-      getCurrentPlayer();
-      if (playerTwoTurn) {
-        if (DOMController.computerOpponent()) {
-          swapTurn();
-        } else {
-          board[index] = "O";
-          cell.textContent = playerTwo.getMark();
-          cell.classList.add("O");
-          DOMController.displayNextPlayer(playerOne.getMark());
-        }
-      } else {
-        board[index] = "X";
-        cell.textContent = playerOne.getMark();
-        cell.classList.add("X");
-        DOMController.displayNextPlayer(playerTwo.getMark());
-        if (DOMController.computerOpponent()) {
-          if (gameboard.winningGrid(board, curentPlayer.getMark())) {
-            finishGame = true;
-            DOMController.colorWinnerCells(curentPlayer.getMark());
-            endGame(curentPlayer.getName());
-            return true;
-          }
-          checkTie();
-          if (!finishGame) {
-            setTimeout(() => {
-              if (DOMController.getDifficultyInfo() === "hard") {
-                let AIMoveIndex = AIMove(board, playerTwo).index;
-                board[AIMoveIndex] = "O";
-                let AIMoveCell = document.getElementById(`${AIMoveIndex}`);
-                AIMoveCell.classList.add("O");
-                AIMoveCell.textContent = "O";
-                endComputerGameCheck(playerTwo, playerOne);
-              } else if (DOMController.getDifficultyInfo() === "easy") {
-                computerMove();
-                endComputerGameCheck(playerTwo, playerOne);
-              }
-            }, 0.5 * 1000);
-          }
-        }
-      }
-      if (gameboard.winningGrid(board, curentPlayer.getMark())) {
-        finishGame = true;
-        DOMController.colorWinnerCells(curentPlayer.getMark());
-        endGame(curentPlayer.getName());
-        return;
-      }
-      checkTie();
-      swapTurn();
-    }
+  const backToStart = () => {
+    const backButton = document.querySelector(".back-btn");
+    backButton.addEventListener("click", () => {
+      location.reload();
+    });
   };
 
-  const endComputerGameCheck = (currPlayer, otherPlayer) => {
-    if (gameboard.winningGrid(board, currPlayer.getMark())) {
-      finishGame = true;
-      DOMController.colorWinnerCells(currPlayer.getMark());
-      endGame(currPlayer.getName());
-      return;
-    } else {
-      DOMController.displayNextPlayer(otherPlayer.getMark());
-      checkTie();
-      swapTurn();
-      return;
-    }
-  };
-
-  const computerMove = () => {
-    let emptyCells = [...availableCells(board)];
-    // gets a random cell from the array of available cells
-    let computerMoveIndex =
-      emptyCells[Math.floor(Math.random() * emptyCells.length)];
-    let computerMoveCell = document.getElementById(`${computerMoveIndex}`);
-    computerMoveCell.classList.add("O");
-    computerMoveCell.textContent = "O";
-    board[computerMoveIndex] = "O";
-  };
-
-  const startGame = () => {
-    DOMController.displayNextPlayer(playerOne.getMark());
-    playerTwoTurn = false;
-
-    gameboard.createGrid();
-    DOMController.addCellInteraction(cellClickHandler);
-  };
-
-  DOMController.initializeStartScreen();
+  DOMController.startScreen();
   return { startGame };
 })();

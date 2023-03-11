@@ -67,6 +67,39 @@ h6 {
   font-weight: 700;
 }
 
+.title,
+.start {
+  justify-self: center;
+  position: fixed;
+}
+
+.title {
+  top: 30%;
+}
+
+.title.move-up {
+  top: 40%;
+  transform: translateY(calc(-40vh));
+  transition: 0.7s;
+}
+
+.title.move-up.fix {
+  position: absolute;
+}
+
+.fade-in {
+  animation: fadeInAnimation ease-in 0.4s;
+}
+
+@keyframes fadeInAnimation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .container > .game > .game-board {
   display: grid;
   /* width takes into account 2 x 3px grid gap */
@@ -148,39 +181,6 @@ button.back-btn:hover {
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 0.8rem;
-}
-
-.title,
-.start {
-  justify-self: center;
-  position: fixed;
-}
-
-.title {
-  top: 30%;
-}
-
-.title.move-up {
-  top: 40%;
-  transform: translateY(calc(-40vh));
-  transition: 0.7s;
-}
-
-.title.move-up.fix {
-  position: absolute;
-}
-
-.fade-in {
-  animation: fadeInAnimation ease-in 0.4s;
-}
-
-@keyframes fadeInAnimation {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
 }
 
 .vs-option {
