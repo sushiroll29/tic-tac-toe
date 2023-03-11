@@ -113,15 +113,10 @@ button {
   background-color: var(--green);
 }
 
-button.start-btn,
-button.play-btn {
-  background-color: var(--cream);
-}
-
 button.start-btn:hover,
 button.play-btn:hover {
   cursor: pointer;
-  background-color: var(--dark-cream);
+  background-color: var(--dark-green);
 }
 
 button.play-btn {
@@ -211,10 +206,15 @@ input:checked + img {
   border-radius: 9px;
   box-shadow: 0 0 0 3px var(--cream);
   outline: none;
-  padding: 7px 14px;
+  padding: 5px 10px;
   color: var(--dark-grey);
   font-size: 16px;
   font-weight: 700;
+}
+
+#easy:hover + .diff-option,
+#hard:hover + .diff-option {
+  cursor: pointer;
 }
 
 #easy:checked + .diff-option,
@@ -266,6 +266,6 @@ input:checked + img {
 
 .difficulty {
   display: flex;
-  gap: 3rem;
+  gap: 1.5rem;
   padding: 40px 0;
 }

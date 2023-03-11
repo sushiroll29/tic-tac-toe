@@ -90,12 +90,12 @@ const DOMController = (() => {
   let difficulty;
 
   // using visibility + opacity instead of display:none on some items for animation purposes
-  const visiblityOn = (element) => {
+  const visibilityOn = (element) => {
     element.style.visibility = "visible";
     element.style.opacity = "1";
   };
 
-  const visiblityOff = (element) => {
+  const visibilityOff = (element) => {
     element.style.visibility = "hidden";
     element.style.opacity = "0";
   };
@@ -110,15 +110,15 @@ const DOMController = (() => {
 
   const initializeStartScreen = () => {
     const title = document.querySelector(".title");
-    visiblityOff(gameDiv);
-    visiblityOff(endingButtons);
+    visibilityOff(gameDiv);
+    visibilityOff(endingButtons);
     displayOff(playerSelection);
     displayOff(playerInfo);
     displayOff(difficultyOption);
-    visiblityOff(playButton);
-    visiblityOn(startButton);
+    visibilityOff(playButton);
+    visibilityOn(startButton);
     startButton.addEventListener("click", () => {
-      visiblityOff(startButton);
+      visibilityOff(startButton);
 
       title.classList.add("move-up");
       setTimeout(() => {
@@ -129,13 +129,9 @@ const DOMController = (() => {
     title.classList.add("fix");
   };
 
-  // const initializeGameScreen = () => {
-  //   visiblityOff(endingButtons);
-  // };
-
   const setupScreen = () => {
-    visiblityOff(playButton);
-    visiblityOff(startButton);
+    visibilityOff(playButton);
+    visibilityOff(startButton);
     displayOn(playerSelection);
 
     const playerVsPlayer = document.querySelector("#vs_player");
@@ -145,24 +141,24 @@ const DOMController = (() => {
       vsComputer = false;
       displayOn(playerInfo);
       displayOff(difficultyOption);
-      visiblityOn(playButton);
+      visibilityOn(playButton);
     });
 
     playerVsComputer.addEventListener("click", () => {
       vsComputer = true;
       displayOff(playerInfo);
       displayOn(difficultyOption);
-      visiblityOn(playButton);
+      visibilityOn(playButton);
     });
 
     playButton.addEventListener("click", (e) => {
       e.preventDefault();
-      visiblityOn(gameDiv);
+      visibilityOn(gameDiv);
       displayOff(playerSelection);
       displayOff(playerInfo);
       displayOff(difficultyOption);
-      visiblityOff(playButton);
-      visiblityOff(endingButtons);
+      visibilityOff(playButton);
+      visibilityOff(endingButtons);
       setTimeout(() => {
         gameDiv.classList.add("fade-in");
         game.startGame();
@@ -207,7 +203,7 @@ const DOMController = (() => {
   const computerOpponent = () => vsComputer;
 
   const displayNextPlayer = (nextPlayer) => {
-    visiblityOn(gameInfo);
+    visibilityOn(gameInfo);
     gameInfo.textContent = `${nextPlayer}'s turn`;
   };
 
@@ -267,8 +263,8 @@ const DOMController = (() => {
   };
 
   return {
-    visiblityOn,
-    visiblityOff,
+    visibilityOn,
+    visibilityOff,
     initializeStartScreen,
     displayNextPlayer,
     displayWinner,
@@ -319,10 +315,10 @@ const game = (() => {
   const resetGame = () => {
     const resetButton = document.querySelector(".reset-btn");
     const endingButtons = document.querySelector(".ending-btns");
-    DOMController.visiblityOn(endingButtons);
+    DOMController.visibilityOn(endingButtons);
 
     resetButton.addEventListener("click", () => {
-      DOMController.visiblityOff(endingButtons);
+      DOMController.visibilityOff(endingButtons);
       gameboard.resetGrid();
       board = gameboard.getGameBoardGrid();
       finishGame = false;
@@ -351,6 +347,7 @@ const game = (() => {
   const availableCells = (brd) => {
     return brd.filter((x) => x != "X" && x != "O");
   };
+
   //minimax algorithm
   const AIMove = (brd, player) => {
     const emptyCells = availableCells(brd);
@@ -428,36 +425,27 @@ const game = (() => {
         cell.classList.add("X");
         DOMController.displayNextPlayer(playerTwo.getMark());
         if (DOMController.computerOpponent()) {
-          if (DOMController.getDifficultyInfo() === "hard") {
-            //else easy option ------------------
-            if (gameboard.winningGrid(board, curentPlayer.getMark())) {
-              finishGame = true;
-              DOMController.colorWinnerCells(curentPlayer.getMark());
-              endGame(curentPlayer.getName());
-              return true;
-            }
-            checkTie();
-            if (!finishGame) {
-              setTimeout(() => {
-                // copmuterMove();
+          if (gameboard.winningGrid(board, curentPlayer.getMark())) {
+            finishGame = true;
+            DOMController.colorWinnerCells(curentPlayer.getMark());
+            endGame(curentPlayer.getName());
+            return true;
+          }
+          checkTie();
+          if (!finishGame) {
+            setTimeout(() => {
+              if (DOMController.getDifficultyInfo() === "hard") {
                 let AIMoveIndex = AIMove(board, playerTwo).index;
                 board[AIMoveIndex] = "O";
                 let AIMoveCell = document.getElementById(`${AIMoveIndex}`);
                 AIMoveCell.classList.add("O");
                 AIMoveCell.textContent = "O";
-                if (gameboard.winningGrid(board, playerTwo.getMark())) {
-                  finishGame = true;
-                  DOMController.colorWinnerCells(playerTwo.getMark());
-                  endGame(playerTwo.getName());
-                  return;
-                } else {
-                  DOMController.displayNextPlayer(playerOne.getMark());
-                  checkTie();
-                  swapTurn();
-                  return;
-                }
-              }, 0.5 * 1000);
-            }
+                endComputerGameCheck(playerTwo, playerOne);
+              } else if (DOMController.getDifficultyInfo() === "easy") {
+                computerMove();
+                endComputerGameCheck(playerTwo, playerOne);
+              }
+            }, 0.5 * 1000);
           }
         }
       }
@@ -472,24 +460,32 @@ const game = (() => {
     }
   };
 
-  const copmuterMove = () => {
-    const cells = document.querySelectorAll(".cell");
-    let emptyCells = [];
-    let cellsArr = Array.from(cells);
-    cellsArr.forEach((cell) => {
-      if (!isCellFilled(cell)) {
-        emptyCells.push(cell);
-      }
-    });
+  const endComputerGameCheck = (currPlayer, otherPlayer) => {
+    if (gameboard.winningGrid(board, currPlayer.getMark())) {
+      finishGame = true;
+      DOMController.colorWinnerCells(currPlayer.getMark());
+      endGame(currPlayer.getName());
+      return;
+    } else {
+      DOMController.displayNextPlayer(otherPlayer.getMark());
+      checkTie();
+      swapTurn();
+      return;
+    }
+  };
 
-    let computerMoveCell =
+  const computerMove = () => {
+    let emptyCells = [...availableCells(board)];
+
+    // gets a random cell from the array of available cells
+    let computerMoveIndex =
       emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    let computerMoveCell = document.getElementById(`${computerMoveIndex}`);
     computerMoveCell.classList.add("O");
     computerMoveCell.textContent = "O";
   };
 
   const startGame = () => {
-    // DOMController.initializeGameScreen();
     DOMController.displayNextPlayer(playerOne.getMark());
     playerTwoTurn = false;
 
